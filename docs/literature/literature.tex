@@ -1,7 +1,9 @@
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[backend=biber,sorting=nyt]{biblatex}
+\usepackage[backend=biber,style=alphabetic,sorting=nyt]{biblatex}
+\DeclareFieldFormat{labelalpha}{\thefield{entrykey}}
+\DeclareFieldFormat{extraalpha}{}
 \bibliography{../report/report}
 \title{Literature}
 \author{Project Group 26}
@@ -12,10 +14,21 @@
 \section{Papers by protocol}
 
 \subsection{Berkeley}
-\cite{Gusella1989} describes TEMPO from BSD 4.3, which is more widely known as just the Berkeley algorithm.
+\cite{Gusella89} describes TEMPO from BSD 4.3, which is more widely known as the Berkeley algorithm.
+\textbf{Abstract}:
+The authors discuss the upper and lower bounds on the accuracy of the time synchronization achieved by the algorithm implemented in TEMPO, the distributed service that synchronizes the clocks of the University of California, Berkeley, UNIX 4.3BSD systems. The accuracy is shown to be a function of the network transmission latency; it depends linearly upon the drift rate of the clocks and the interval between synchronizations. TEMPO keeps the clocks of the VAX computers in a local area network synchronized with an accuracy comparable to the resolution of single-machine clocks. Comparison with other clock synchronization algorithms shows that TEMPO, in an environment with no Byzantine faults, can achieve better synchronization at a lower cost.
 
 \subsection{Average TimeSync}
-\cite{SchenatoGamba2007} 
+\cite{SchenatoGamba2007} is an earlier version of the paper, from an IEEE conference.  
+
+The later one, \cite{LucaFiorentin2011}, can be viewed as a refined version of the paper.  \textbf{Abstract}: describes a new consensus-based protocol, referred to as Average TimeSync (ATS), for
+synchronizing the clocks of a wireless sensor network. This algorithm is based on a cascade of two
+consensus algorithms, whose main task is to average local information. The proposed algorithm has the
+advantage of being totally distributed, asynchronous, robust to packet drop and sensor node failure, and
+it is adaptive to time-varying clock drifts and changes of the communication topology. In particular,
+a rigorous proof of convergence to global synchronization is provided in the absence of process and
+measurement noise and of communication delay. Moreover, its effectiveness is shown through a number
+of experiments performed on a real wireless sensor network.
 
 \nocite{*}
 \printbibliography
