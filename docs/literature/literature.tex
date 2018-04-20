@@ -1,0 +1,29 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage[style=alphabetic,sorting=debug]{biblatex}
+\DeclareFieldFormat{labelalpha}{\thefield{entrykey}}
+\DeclareFieldFormat{extraalpha}{}
+\addbibresource{../report/report.bib}
+
+\begin{document}
+
+\section{Consensus-based}
+
+\subsection{Average TimeSync}
+
+\begin{itemize}
+\item \cite{SchenatoGamba07}
+\item \cite{LucaFiorentin11}
+\end{itemize}
+
+\subsection{SATS}
+
+\begin{itemize}
+  \item \cite{HeChengShiChen13}
+\end{itemize}
+
+\printbibliography
+
+\end{document}
