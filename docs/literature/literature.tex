@@ -6,22 +6,50 @@
 \DeclareFieldFormat{labelalpha}{\thefield{entrykey}}
 \DeclareFieldFormat{extraalpha}{}
 \addbibresource{../report/report.bib}
-
+ 
 \begin{document}
 
 \section{Consensus-based}
 
-\subsection{Average TimeSync}
-
 \begin{itemize}
-\item \cite{SchenatoGamba07}
-\item \cite{LucaFiorentin11}
+\item Average TimeSync
+  \begin{itemize}
+  \item \cite{SchenatoGamba07}
+  \item \cite{LucaFiorentin11}
+  \end{itemize}
 \end{itemize}
 
-\subsection{SATS}
+\begin{itemize}
+\item SATS - Secure Average-Consensus-Based Time Synchronization
+  \begin{itemize}
+  \item \cite{HeChengShiChen13}
+  \end{itemize}
+\end{itemize}
+
 
 \begin{itemize}
-  \item \cite{HeChengShiChen13}
+\item MMTS - about adopting both maximum consensus and minimum consensus
+  \begin{itemize}
+  \item \cite{HeLiChenCheng13}
+  \end{itemize}
+\end{itemize}
+
+\section{Traditional - some with some sort of master-slave notion}
+
+\begin{itemize}
+\item Berkeley
+  \begin{itemize}
+  \item \cite{Gusella89} The main paper about the Berkeley protocol
+  \end{itemize}
+\end{itemize}
+
+\section{Other}
+
+\begin{itemize}
+\item \cite{Schneider90} Tutorial about implementing distributed state-machines (not consensus based AFAICT)
+\item \cite{Lamport78} Logical clocks, and using them to implement ``real'' time synchronization
+\item \cite{Lamport82} Seminal work about the Byzantine Generals Problem, as a metaphor for describing a fault-mode in distributed systems
+\item \cite{Ramanathan90} Description of a hybrid software/hardware scheme for synchronization
 \end{itemize}
 
 \printbibliography
