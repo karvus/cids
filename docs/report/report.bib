@@ -25,7 +25,28 @@
  publisher = {ACM},
  address = {New York, NY, USA},
  keywords = {clock synchronization, computer networks, distributed systems, multiprocess systems},
-} 
+}
+
+@article{Lamport82,
+author = {Lamport, Leslie and Shostak, Robert and Pease, Marshall},
+title = {The Byzantine Generals Problem},
+booktitle = {},
+year = {1982},
+month = {July},
+abstract = {I have long felt that, because it was posed as a cute problem about philosophers seated around a table, Dijkstra's dining philosopher's problem received much more attention than it deserves. (For example, it has probably received more attention in the theory community than the readers/writers problem, which illustrates the same principles and has much more practical importance.) I believed that the problem introduced in [41] was very important and deserved the attention of computer scientists. The popularity of the dining philosophers problem taught me that the best way to attract attention to a problem is to present it in terms of a story.
+
+There is a problem in distributed computing that is sometimes called the Chinese Generals Problem, in which two generals have to come to a common agreement on whether to attack or retreat, but can communicate only by sending messengers who might never arrive. I stole the idea of the generals and posed the problem in terms of a group of generals, some of whom may be traitors, who have to reach a common decision. I wanted to assign the generals a nationality that would not offend any readers. At the time, Albania was a completely closed society, and I felt it unlikely that there would be any Albanians around to object, so the original title of this paper was The Albanian Generals Problem. Jack Goldberg was smart enough to realize that there were Albanians in the world outside Albania, and Albania might not always be a black hole, so he suggested that I find another name. The obviously more appropriate Byzantine generals then occurred to me.
+
+The main reason for writing this paper was to assign the new name to the problem. But a new paper needed new results as well. I came up with a simpler way to describe the general 3n+1-processor algorithm. (Shostak's 4-processor algorithm was subtle but easy to understand; Pease's generalization was a remarkable tour de force.) We also added a generalization to networks that were not completely connected. (I don't remember whose work that was.) I also added some discussion of practical implementation details.},
+publisher = {},
+url = {https://www.microsoft.com/en-us/research/publication/byzantine-generals-problem/},
+address = {},
+pages = {382-401},
+journal = {ACM Transactions on Programming Languages and Systems},
+volume = {4/3},
+chapter = {},
+isbn = {},
+}
 
 @inproceedings{SchenatoGamba07, 
   author={L. Schenato and G. Gamba}, 
@@ -80,3 +101,54 @@ keywords={protocols;synchronisation;telecommunication network topology;telecommu
 doi={10.1109/TSP.2013.2286102}, 
 ISSN={1053-587X}, 
 month={Dec},}
+
+@article{Schneider90,
+ author = {Schneider, Fred B.},
+ title = {Implementing Fault-tolerant Services Using the State Machine Approach: A Tutorial},
+ journal = {ACM Comput. Surv.},
+ issue_date = {Dec. 1990},
+ volume = {22},
+ number = {4},
+ month = dec,
+ year = {1990},
+ issn = {0360-0300},
+ pages = {299--319},
+ numpages = {21},
+ url = {http://doi.acm.org/10.1145/98163.98167},
+ doi = {10.1145/98163.98167},
+ acmid = {98167},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+} 
+@article{Ramanathan90,
+ author = {Ramanathan, Parameswaran and Shin, Kang G. and Butler, Ricky W.},
+ title = {Fault-Tolerant Clock Synchronization in Distributed Systems},
+ journal = {Computer},
+ issue_date = {October 1990},
+ volume = {23},
+ number = {10},
+ month = oct,
+ year = {1990},
+ issn = {0018-9162},
+ pages = {33--42},
+ numpages = {10},
+ url = {http://dx.doi.org/10.1109/2.58235},
+ doi = {10.1109/2.58235},
+ acmid = {101842},
+ publisher = {IEEE Computer Society Press},
+ address = {Los Alamitos, CA, USA},
+} 
+
+@article{HeLiChenCheng13,
+  author={He,Jianping and Li,Hao and Chen,Jiming and Cheng,Peng},
+  year={2014},
+  title={Study of consensus-based time synchronization in wireless sensor networks},
+  journal={ISA transactions},
+  volume={53},
+  number={2},
+  pages={347-357},
+  abstract={Recently, various consensus-based protocols have been developed for time synchronization in wireless sensor networks. However, due to the uncertainties lying in both the hardware fabrication and network communication processes, it is not clear how most of the protocols will perform in real implementations. In order to reduce such gap, this paper investigates whether and how the typical consensus-based time synchronization protocols can tolerate the uncertainties in practical sensor networks through extensive testbed experiments. For two typical protocols, i.e., Average Time Synchronization (ATS) and Maximum Time Synchronization (MTS), we first analyze how the time synchronization accuracy will be affected by various uncertainties in the system. Then, we implement both protocols on our sensor network testbed consisted of Micaz nodes, and investigate the time synchronization performance and robustness under various network settings. Noticing that the synchronized clocks under MTS may be slightly faster than the desirable clock, by adopting both maximum consensus and minimum consensus, we propose a modified protocol, MMTS, which is able to drive the synchronized clocks closer to the desirable clock while maintaining the convergence rate and synchronization accuracy of MTS.;Recently, various consensus-based protocols have been developed for time synchronization in wireless sensor networks. However, due to the uncertainties lying in both the hardware fabrication and network communication processes, it is not clear how most of the protocols will perform in real implementations. In order to reduce such gap, this paper investigates whether and how the typical consensus-based time synchronization protocols can tolerate the uncertainties in practical sensor networks through extensive testbed experiments. For two typical protocols, i.e., Average Time Synchronization (ATS) and Maximum Time Synchronization (MTS), we first analyze how the time synchronization accuracy will be affected by various uncertainties in the system. Then, we implement both protocols on our sensor network testbed consisted of Micaz nodes, and investigate the time synchronization performance and robustness under various network settings. Noticing that the synchronized clocks under MTS may be slightly faster than the desirable clock, by adopting both maximum consensus and minimum consensus, we propose a modified protocol, MMTS, which is able to drive the synchronized clocks closer to the desirable clock while maintaining the convergence rate and synchronization accuracy of MTS.;},
+  keywords={Control systems; Sensors; Computer network protocols; Analysis},
+  isbn={0019-0578},
+  language={English},
+}
