@@ -11,15 +11,16 @@
 
 \section{Initial problem statement}
 
-Time synchronization is a widely known problem, that has many applications. E.g. multiple clients in a distributed system must agree on a single time in order to successfully tackle a problem. 
-%Different consensus algorithms like Raft and Paxos, or different implementations of said algorithms can be used to solve such a problem.
+Time synchronization is a widely known problem that has many applications. E.g. multiple clients in a distributed system must agree on a single time in order to successfully tackle a problem. The problem has been worked on since the birth of computers, and solutions have evolved over time in response to changing demands. In recent years, consensus based algorithms have gained traction with the propagation of IoT, and several new algorithms have been developed as a result.
 
-We will compare various algorithms for clock synchronization in  distributed systems, and choose one (or multiple) algorithms to implement.
+We will compare two recent consensus-based algorithms for clock synchronization in distributed systems, ATP and MMTP, and implement them. The comparison will be based on the theoretical work from the algorithms' authors, our own analysis, and an implementation of both algor
+sithms in virtual distributed networks.
 
 \begin{itemize}
+    \item Describe the time synchronization problem. Why is it necessary? Why is it not trivial? 
     \item Describe the advantages and disadvantages of the different kinds of time synchronization strategies (non-consensus vs. consensus)
-    \item Describe and analyze [various] consensus-based time synchronization algorithms.
-    \item Compare the algorithms, their advantages and disadvantages, and their areas of application.
+    \item Describe and analyze the consensus-based algorithms ATP and MMTP.
+    \item Compare the algorithms, their advantages and disadvantages, and their areas of application (through both implementation and theoretical analysis).
 \end{itemize}
 
 \end{document}
