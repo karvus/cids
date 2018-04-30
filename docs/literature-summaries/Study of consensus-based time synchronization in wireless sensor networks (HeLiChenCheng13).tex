@@ -1,0 +1,98 @@
+\documentclass{article}
+\usepackage{amsmath}
+
+\title{Study of consenus-based time synchronization in wireless sensor networks}
+
+\begin{document}
+\maketitle
+\section{Summary of summary}
+Great introduction, great short description of ATS and MTS, first experimental comparison of ATS and MTS.
+
+\section{Abstract}
+Investigates how consensus-based algorithms handle real life uncertainties. Tests ATS and MTS, first by analysis then by implementation. Finally suggests version of MTS called MMTS, which gets synchronization closer to the expected clock than MTS.
+
+\section{Introduction}
+\textit{Lots} of references, provides overview of time synchronization in Wireless Sensor Networks (WSNs), both consensus- and root-based. Talks about how most algorithms are backed by theoretical proofs, but little experimental research (e.g. with communication delay).
+
+\section{Related work}
+Links to experimental research on classical time synchronization algorithms, and talks about improvements and new algorithms created based on this.
+
+Specifies "real life uncertainties" to mean e.g. communication delay and measurement noise. Also talks about some papers on methods of estimating these uncertainties.
+
+\section{Preliminaries}
+Classic definition of hardware clocks as a function
+\begin{equation} \label{eq:timefunc}
+    t_i(t) = a_i * t + b_i
+\end{equation}
+where $a_i$ is the hardware clock skew, $b_i$ is the hardware clock offset, and the real time $t$ is unavailable to the device. Isolating for $t$ gives
+    $$ t = \frac{t_i(t) - b_i}{a_i} $$,
+which can be inserted into (\ref{eq:timefunc}) for a node $j$ to give
+\begin{align}
+    t_j(t) &= \frac{a_j}{a_i} * (t_i(t) - b_i) + b_j \nonumber \\
+        &= \frac{a_j}{a_i} * t_i(t) + (b_j - \frac{a_j}{a_i} * b_i) \nonumber \\ 
+        &= a_{ij} * t_i(t) + b_{ij}. \label{eq:timefunc2}
+\end{align}
+
+(\ref{eq:timefunc2}) allows us to express $t_j$ as a function of $t_i$ at a $t$, and is called the relative clock of $i$ and $j$. The paper shows by experiment that this linear function accurately describes the hardware clock of two Micaz sensors.
+
+A logical clock is defined as
+\begin{align*}
+L_i(t) &= \^{a}_i \cdot t_i(t) + \^{b}_i \\
+    &= \^{a}_i a_i t_i + \^{a}_i b_i + \^{b}_i
+\end{align*}
+with the goal of achieving $\^{a}_i a_i = a_v$ and $\^{a}_i b+\^{b}_i = b_v$ - where $a_v$ and $b_v$ are constants - for some value of $\^{a}_i$ and $\^{b}_i$ for each node $i$.\\
+In other words: given a node $i$, we try to find the values of $\^{a}_i$ and $\^{b}_i$ that makes sure that $L_i(t)$ is the same as all other node's logical clocks, such that they all agree what the current time is.
+
+This is done iteratively, creating the notation $\^{a}_i(k)$ and $\^{b}_i(k)$ with $k$ being the iteration number, with the hope (and for a decent algorithm, the proof) that 
+\begin{align*}
+    \lim_{k\to\infty}& \^{a}_i(k)a_i = a_v \\
+    \lim_{k\to\infty}& \^{a}_i(k)b_i + \^{b}_i(k) = b_v
+\end{align*}
+
+\subsection{ATS}
+General idea of ATS is that each node repeatedly averages its logical clock with that of a neighbor node.
+
+The relative skew $a_{ij} = a_j / a_i$ is calculated from two readings $(t_i(t_0), t_j(t_0))$ and $(t_i(t_1), t_j(t_1))$ by
+\begin{equation} \label{eq:a_ij}
+    a_{ij} = \frac{t_j(t_1) - t_j(t_0)}{t_i(t_1) - t_i(t_0)}
+\end{equation}
+and the stored relative skew is changed slightly in the direction of this momentary skew by doing
+$$ a_{ij} \leftarrow \rho_n \a_{ij} + (1 - \rho_n) \frac{t_j(t_1) - t_j(t_0)}{t_i(t_1) - t_i(t_0)}. $$
+Similarly, we update $\^{a}_i$ and $\^{b}_i$ slightly by doing
+$$ \^{a}_i \leftarrow \rho_v \^{a}_i + (1 - \rho_v) a_{ij} \^{a}_j $$
+$$ \^{b}_i \leftarrow \rho_o \^{b}_i + (1 - \rho_o) (t_j(t_1) - t_i(t_1)) $$
+with $\rho_n, \rho_v, \rho_o \in (0,1)$, with $1$ meaning no change from the stored value, and $0$ meaning set to the momentary values.
+
+This approach will slowly reach a local consensus amongst the node's neighbors, who in turn reach consensus with their neighbors, $...$, which eventually creates a global consensus across the network.
+
+\subsection{MTS}
+
+General idea of MTS is that each node sets its logical clock to equal the maximum logical clock amongst its neighbors.
+
+This is done by calculating $a_{ij}$ using (\ref{eq:a_ij}), and then checking if $q_{ij} = a_{ij} \^{a}_j/\^{a}_i = a_j\^{a}_j / a_i\^{a}_i$ is greater than $1$ - if it is, the node's logical clock is set to match the neighbors:
+\begin{align*}
+    \^{a}_i &\leftarrow a_{ij}\^{a}_j \\
+    \^{b}_i &\leftarrow \^{a}_j t_j(t) + \^{b}_j - a_ij \^a_j t_i(t)
+\end{align*}
+If $q_{ij} = 1$, then
+$$ \^b_i \leftarrow \max\{\^a_i t_i(t) + \^b_i | \^a_j t_j(t) + \^b_j\} - \^a_i t_i(t) $$
+
+\section{Experimental comparison}
+
+MTS is said to have certain advantages over AST - however, these are theoretical advantages based on the assumption that there is no communication delay. They have even been shown to fail under certain uncertainties [25]
+
+\textit{TODO: Lots of theoretical analysis on uncertainties as they relate to the above formulas}
+
+Algorithms are compared based on convergence rate (time it takes for all clocks to get within $X$ value of eachother), synchronization accuracy (how close clocks get to eachother once synchronization has stabilized), and effect of hop number (how well it handles a highly distributed network).
+
+\section{Discussion}
+
+\textit{TODO: section}
+
+\section{MMTS}
+
+They propose a modification to MTS.
+
+\textit{TODO: explain}
+
+\end{document}

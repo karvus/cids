@@ -1,10 +1,12 @@
 \documentclass{beamer}
- 
+\usefonttheme[onlymath]{serif}
+\usefonttheme{professionalfonts}
 \usepackage[utf8]{inputenc}
- 
+\usepackage[style=alphabetic,sorting=debug]{biblatex}
+\addbibresource{../report/report.bib}
  
 %Information to be included in the title page:
-\title{Mid-way presentation}
+\title{Consnsus in Distributed Systems \\ Clock Synchronization}
 \author{J. R. Fagerberg, M. Møller, L. O. J. Olsen,\\ P. H. Ratgen, T. Stenhaug}
 \institute{IMADA}
 \date{\today}
@@ -14,40 +16,138 @@
 \frame{\titlepage}
  
 \begin{frame}
-\frametitle{Abstract}
-\begin{itemize}
-    \item A distributed system
-    \item Applications of a distributed system
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Abstract - The time-sync problem}
+\frametitle{Introduction}
     \begin{itemize}
-        \item 
+        \item What is a distributed system?
+        \item Why is clock synchronization in distributed systems needed?
+        \begin{itemize}
+            \item Clocks run at different speeds (skew)
+            \item Unpredictable network latency
+        \end{itemize}
+        \item Ordering of events
+        \begin{itemize}
+            \item Not necessarily synced to a "real time" clock
+            \item Only a strong clock condition
+        \begin{itemize}
+            \item \( a \rightarrow b \Rightarrow c(a) \rightarrow c(b) \)
+        \end{itemize}
     \end{itemize}
+    \item Real time synchronization
+    \begin{itemize}
+        \item Sharing frequency (TDMA)
+        \item Aviation
+    \end{itemize}
+    \end{itemize}
+\end{frame}
+ 
+\begin{frame}
+\frametitle{Abstract}
+Clock synchronization is a widely known problem that has many applications. E.g. multiple clients in a distributed system must agree on a single time in order to successfully tackle a problem. The problem has been worked on since the birth of computer networks, and solutions have evolved over time in response to changing demands. In recent years, consensus based algorithms have gained traction with the propagation of IoT, and several new algorithms have been developed as a result.\\
+\vspace{1em}
+We will compare two recent consensus-based algorithms for clock synchronization in distributed systems, ATS and MMTS, and implement them. The comparison will be based on the theoretical work from the algorithms' authors, our own analysis, and an implementation of both algorithms in virtual distributed networks.
 \end{frame}
 
 \begin{frame}{Problem statement}
-    
+\begin{itemize}
+    \item Describe the time synchronization problem. Why is it necessary? Why is it not trivial? 
+    \item Describe the advantages and disadvantages of the different kinds of time synchronization strategies (non-consensus vs. consensus)
+    \item Describe and analyze the consensus-based algorithms ATS and MMTS.
+    \item Compare the algorithms, their advantages and disadvantages, and their areas of application (through both implementation and theoretical analysis).
+\end{itemize}
+
 \end{frame}
  
-\begin{frame}{Literature}
-     
+\begin{frame}{Choice of algorithms}
+    \begin{itemize}
+        \item More recent
+        \begin{itemize}
+            \item 
+        \end{itemize}
+    \end{itemize}
 \end{frame}
  
-\begin{frame}{Algorithms}
-    
+\begin{frame}{Algorithms - general}
+    \begin{itemize}
+        \item Hardware clocks modelled as linear functions $$ \tau_i(t) = \alpha_i t + \beta_i $$
+        \item Hardware clocks can be modified into logical clocks
+        \begin{align*}
+            L_i(t) &= \hat{\alpha}_i \tau_i(t) + \hat{\beta}_i \\
+                    &= \hat{\alpha}_i \alpha_i t + \hat{\alpha}_i \beta_i + \hat{\beta}_i
+        \end{align*}
+        \item Goal is to make $\hat{\alpha}_i \alpha_i \approx A$ and $\hat{\alpha}_i \beta_i + \hat{\beta}_i \approx B$, where $A$ and $B$ are constants in the network.\\
+        That is, goal is to find values for $\hat{\alpha}_i$ and $\hat{\beta}_i$ for each node $i$ so that all logical clocks agree on what the time is.
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Algorithms - Average Time-Sync}
+    \begin{itemize}
+        \item Incrementally finds $\hat{\alpha}_i$ and $\hat{\beta}_i$.
+        \item Each node talks to a neighbor, and modifies own logical clock so that it is closer to the neighbors logical clock.
+        \item How close it gets to the neighbors logical clock depends on algorithm configuration
+        $$ x_{ours} \leftarrow \rho \cdot x_{ours} + (1 - \rho) \cdot x_{theirs}. $$
+        \item This has been proven to converge eventually assuming no uncertainties (e.g. communication delay) \cite{LucaFiorentin11}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Algorithms - (Modified) Maximum Time-Sync}
+    \begin{itemize}
+        \item Quickly finds local consensus, incrementally finds global consensus.
+        \item Each node talks to a neighbor, and modifies own logical clock to equal neighbors logical clock iff neighbors logical clock is greater than own logical clock.
+        \item This has been proven to converge eventually assuming no uncertainties (e.g. communication delay) \cite{HeChengShiChen11}
+        \item However, this doesn't work if communication delay is introduced. MMTS has been proposed as an alternative based on experimental results \cite{HeLiChenCheng13}
+    \end{itemize}
 \end{frame}
 
 \begin{frame}{Implementation}
-    
+   \begin{itemize}
+       \item Simulation of a distributed network
+       \item Simulated time skew and/or delay on each node that the algorithms will have to deal with
+       \item We will run tests with a number of different nodes and topologies to see how that influences the performance of the algorithms
+       \item Measurement tools for comparing the different algorithms
+       \item Functionally, the algorithms work quite similarly. Each node regularly updates their time, based on a comparison with the time of the neighbor.
+   \end{itemize} 
 \end{frame}
  
 \begin{frame}{Process analysis}
     \begin{itemize}
-        \item Information gathering
-        \item Specifying a problem
+        \item Gathering articles, material and information. Summarizing articles for later use in the report.
+        \item Specifying a topic/problem was difficult due to initial lack of knowledge on the topic. 
+        \item We've had fairly frequent meetings, 2-3 times a week, where the majority of our work was conducted. 
+        \item Work is distributed according to proficiency. 
+        e.g. those of us with more programming experience lead the implementation effort.
+        \item Cooperation hasn't been an issue.
     \end{itemize}
+\end{frame}
+
+\begin{frame}{Literature}
+    Consensus-based
+    
+        \begin{itemize}
+            \item Average TimeSync
+                \begin{itemize}                        
+                \item \cite{SchenatoGamba07}
+                    \item \cite{LucaFiorentin11}
+                \end{itemize}
+            \item SATS - Secure Average-Consensus-Based Time Synchronization - \cite{HeChengShiChen13}
+            \item MMTS - about adapting both maximum consensus and minimum consensus- \cite{HeLiChenCheng13}
+            \item MTS - Maximum Time Synchronization - \cite{HeChengShiChen14}
+        \end{itemize}
+\end{frame}
+
+\begin{frame}{Literature}
+    Non-consensus
+    
+        \begin{itemize}
+        \item  RBS - Reference Broadcast Synchronization - \cite{ElsonGirodEstrin02}
+        \item Berkeley
+          \begin{itemize}
+          \item \cite{Gusella89} The main paper about the Berkeley protocol
+          \item \cite{GusellaZatti85} 85 paper on Berkeley protocol (Also by Gusella)
+          \end{itemize}
+        \item FTSP - The Flooding Time Synchronization Protocol - \cite{Maroti04} 
+        \item TPSN - Timing-sync Protocol for Sensor Networks - \cite{GaneriwalKumarSrivastava03}
+    \end{itemize}
+
 \end{frame}
  
 \end{document}
