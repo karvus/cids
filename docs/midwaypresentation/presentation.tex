@@ -20,9 +20,20 @@
   \begin{itemize}
   \item<1-> What is a distributed system?
     \begin{itemize}
-    \item<2-> "[\ldots{}] collection of autonomous computing elements that appears to
-      its users as a single coherent system" \cite{TanenbaumSteen06}
-    \item<3-> "Users" refer to both software processes and humans.
+    \item<2-> ``A distributed system is a collection of autonomous
+      computing elements that appears to its users as a single
+      coherent system.'' \footnote{Andrew S. Tanenbaum and Maarten van
+        Steen. 2006. Distributed Systems: Principles and Paradigms
+        (2nd Edition). Prentice-Hall, Inc., Upper Saddle River, NJ,
+        USA.}
+    \item<3-> ``Users'' refer to both software processes and humans.
+    \item<4-> Examples
+      \begin{itemize}
+      \item<5-> WWW
+      \item<6-> MMOs
+      \item<7-> Mobile networks
+      \item<8-> Wireless Sensor Networks (that we have chosen)
+      \end{itemize}
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -32,36 +43,14 @@
   \begin{itemize}
   \item<1-> What is consensus in a distributed system?
     \begin{itemize}
-    \item<2-> Problem: Achieve system reliability/consistency in the presence of
-      faulty or malicious processes.
+    \item<2-> Problem: reliability/consistency in presence of faulty
+      and/or malicious processes.
     \item<3-> Byzantine Generals problem
-    \item<4-> Paxos/Raft protocols
-    \end{itemize}
-  \end{itemize}
-\end{frame}
-\begin{frame}
-  \frametitle{Introduction}
-  \begin{itemize}
-  \item<1-> Why is clock synchronization important?
-    \begin{itemize}
-    \item<2-> Build process
-    \end{itemize}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Introduction}
-  \begin{itemize}
-  \item<1-> ``Traditional'' methods (server/client)
-    \begin{itemize}
-    \item<2-> NTP, Network Time Protocol
       \begin{itemize}
-      \item<3-> pervasive on Internet
-      \item<4-> clients poll server
-      \end{itemize}
-    \item<5-> The Berkeley algorithm
-      \begin{itemize}
-      \item<6-> Server polls machines
+      \item<4-> Camped outside besieged city
+      \item<5-> Attack or retreat: success iff loyal generals decide on same plan (consensus)
+      \item<6-> Communicate by messenger only
+      \item<7-> Traitorous generals analogue to faulty nodes
       \end{itemize}
     \end{itemize}
   \end{itemize}
@@ -70,14 +59,36 @@
 \begin{frame}
   \frametitle{Introduction}
   \begin{itemize}
-  \item<1-> Why clock synchronization in wireless networks?
+  \item<1-> What is clock synchronization?
     \begin{itemize}
-    \item<2-> most recent work done in this field
-    \item<3-> felt there was better chance of finding something new
+    \item<2-> Can be relative ordering of events in a distributed system
+      (logical clocks, transactions)
+    \item<3-> ...or that each node is coordinated within the system (TDSM)
+    \item<4-> ...or absolute time, coordinated with an atomic clock.
     \end{itemize}
   \end{itemize}
 \end{frame}
- 
+
+\begin{frame}
+  \frametitle{Introduction}
+  \begin{itemize}
+  \item<1-> Synchronization protocols
+    \begin{itemize}
+    \item<2-> Master/slave (NTP, Berkeley, other variants)
+    \item<3-> For WSNs; RBS, TPSN, FTSP etc.      
+      \begin{itemize}
+      \item<4-> tree-based in some sense
+      \item<5-> sensitive to changing node topology
+      \end{itemize}      
+    \item<6-> Enter consensus-based
+      \begin{itemize}
+      \item<7-> Recall Byzantine Generals Problem
+      \item<8-> We're looking at ATS and MMTS
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
 \begin{frame}
 \frametitle{Abstract}
 Clock synchronization is a widely known problem that has many applications. E.g. multiple clients in a distributed system must agree on a single time in order to successfully tackle a problem. The problem has been worked on since the birth of computer networks, and solutions have evolved over time in response to changing demands. In recent years, consensus based algorithms have gained traction with the propagation of IoT, and several new algorithms have been developed as a result.\\
