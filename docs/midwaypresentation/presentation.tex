@@ -16,28 +16,66 @@
 \frame{\titlepage}
  
 \begin{frame}
-\frametitle{Introduction}
+  \frametitle{Introduction}
+  \begin{itemize}
+  \item<1-> What is a distributed system?
     \begin{itemize}
-        \item What is a distributed system?
-        \item Why is clock synchronization in distributed systems needed?
-        \begin{itemize}
-            \item Clocks run at different speeds (skew)
-            \item Unpredictable network latency
-        \end{itemize}
-        \item Ordering of events
-        \begin{itemize}
-            \item Not necessarily synced to a "real time" clock
-            \item Only a strong clock condition
-        \begin{itemize}
-            \item \( a \rightarrow b \Rightarrow c(a) \rightarrow c(b) \)
-        \end{itemize}
+    \item<2-> "[\ldots{}] collection of autonomous computing elements that appears to
+      its users as a single coherent system" \cite{TanenbaumSteen06}
+    \item<3-> "Users" refer to both software processes and humans.
     \end{itemize}
-    \item Real time synchronization
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Introduction}
+  \begin{itemize}
+  \item<1-> What is consensus in a distributed system?
     \begin{itemize}
-        \item Sharing frequency (TDMA)
-        \item Aviation
+    \item<2-> Problem: Achieve system reliability/consistency in the presence of
+      faulty or malicious processes.
+    \item<3-> Byzantine Generals problem
+    \item<4-> Paxos/Raft protocols
     \end{itemize}
+  \end{itemize}
+\end{frame}
+\begin{frame}
+  \frametitle{Introduction}
+  \begin{itemize}
+  \item<1-> Why is clock synchronization important?
+    \begin{itemize}
+    \item<2-> Build process
     \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Introduction}
+  \begin{itemize}
+  \item<1-> ``Traditional'' methods (server/client)
+    \begin{itemize}
+    \item<2-> NTP, Network Time Protocol
+      \begin{itemize}
+      \item<3-> pervasive on Internet
+      \item<4-> clients poll server
+      \end{itemize}
+    \item<5-> The Berkeley algorithm
+      \begin{itemize}
+      \item<6-> Server polls machines
+      \end{itemize}
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Introduction}
+  \begin{itemize}
+  \item<1-> Why clock synchronization in wireless networks?
+    \begin{itemize}
+    \item<2-> most recent work done in this field
+    \item<3-> felt there was better chance of finding something new
+    \end{itemize}
+  \end{itemize}
 \end{frame}
  
 \begin{frame}
