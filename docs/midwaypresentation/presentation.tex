@@ -6,8 +6,8 @@
 \addbibresource{../report/report.bib}
  
 %Information to be included in the title page:
-\title{Consnsus in Distributed Systems \\ Clock Synchronization}
-\author{J. R. Fagerberg, M. Møller, L. O. J. Olsen,\\ P. H. Ratgen, T. Stenhaug}
+\title{Consensus in Distributed Systems \\ Clock Synchronization}
+\author{J. R. Fagerberg, M. Møller, L. O. J. Olsen,\newline P. H. Ratgen, T. Stenhaug}
 \institute{IMADA}
 \date{\today}
  
@@ -98,20 +98,20 @@ We will compare two recent consensus-based algorithms for clock synchronization 
 
 \begin{frame}{Problem statement}
 \begin{itemize}
-    \item Describe the time synchronization problem. Why is it necessary? Why is it not trivial? 
-    \item Describe the advantages and disadvantages of the different kinds of time synchronization strategies (non-consensus vs. consensus)
-    \item Describe and analyze the consensus-based algorithms ATS and MMTS.
-    \item Compare the algorithms, their advantages and disadvantages, and their areas of application (through both implementation and theoretical analysis).
+    \item<1-> Describe the time synchronization problem. Why is it necessary? Why is it not trivial? 
+    \item<2-> Describe the advantages and disadvantages of the different kinds of time synchronization strategies (non-consensus vs. consensus)
+    \item<3-> Describe and analyze the consensus-based algorithms ATS and MMTS.
+    \item<4-> Compare the algorithms, their advantages and disadvantages, and their areas of application (through both implementation and theoretical analysis).
 \end{itemize}
 
 \end{frame}
  
-\begin{frame}{Choice of algorithms}
+\begin{frame}
+    \frametitle{Choice of algorithms}
     \begin{itemize}
-        \item More recent
-        \begin{itemize}
-            \item 
-        \end{itemize}
+        \item Target: Wireless sensor networks
+        \item Consensus-based
+        \item By proxy - more recent algorithms
     \end{itemize}
 \end{frame}
  
@@ -173,7 +173,7 @@ We will compare two recent consensus-based algorithms for clock synchronization 
     
         \begin{itemize}
             \item Average TimeSync
-                \begin{itemize}                        
+                \begin{itemize}
                 \item \cite{SchenatoGamba07}
                     \item \cite{LucaFiorentin11}
                 \end{itemize}
