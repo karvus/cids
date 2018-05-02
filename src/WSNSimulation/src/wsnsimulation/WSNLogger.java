@@ -4,7 +4,8 @@ import java.text.MessageFormat;
 import java.util.logging.Level;
 
 /**
- * Simple logger
+ * A simple logger that displays information as simulation-time stamped lines
+ * @authors jofag17, luols17, moell17, perat17, tsten16
  */
 public class WSNLogger {
     private final String name;

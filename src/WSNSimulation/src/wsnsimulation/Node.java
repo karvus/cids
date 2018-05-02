@@ -2,7 +2,7 @@ package wsnsimulation;
 
 /**
  * A generic node in the network
- * @author Johan Fagerberg
+ * @authors jofag17, luols17, moell17, perat17, tsten16
  */
 public interface Node {
     /**

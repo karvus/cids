@@ -7,7 +7,7 @@ import java.util.PriorityQueue;
 /**
  * The overall network of nodes
  * Handles message sending (and delaying), as well as global time keeping
- * @author Johan Fagerberg
+ * @authors jofag17, luols17, moell17, perat17, tsten16
  */
 public class Network {
     /**

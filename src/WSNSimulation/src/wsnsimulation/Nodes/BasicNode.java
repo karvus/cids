@@ -1,9 +1,6 @@
 package wsnsimulation.Nodes;
 
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import sun.java2d.BackBufferCapsProvider;
 import wsnsimulation.Message;
 import wsnsimulation.Messages.StringMessage;
 import wsnsimulation.Network;
@@ -13,7 +10,7 @@ import wsnsimulation.WSNLogger;
 /**
  * A basic Node, that doesn't implement anything but a hardware clock
  * Is supposed to be extended for use by algorithm-specific Node implementations
- * @author me
+ * @authors jofag17, luols17, moell17, perat17, tsten16
  */
 public class BasicNode implements Node {
     private final WSNLogger LOGGER;

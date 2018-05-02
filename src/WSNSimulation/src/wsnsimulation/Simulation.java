@@ -2,6 +2,9 @@ package wsnsimulation;
 
 import wsnsimulation.Nodes.BasicNode;
 
+/**
+ * @authors jofag17, luols17, moell17, perat17, tsten16
+ */
 public class Simulation {
     /**
      * @param args the command line arguments

@@ -2,7 +2,7 @@ package wsnsimulation;
 
 /**
  * A message that can be sent amongst nodes
- * @author Johan Fagerberg
+ * @authors jofag17, luols17, moell17, perat17, tsten16
  */
 public interface Message {
     public Object getData();
