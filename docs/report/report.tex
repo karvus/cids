@@ -40,6 +40,8 @@
 
 \maketitle
 
+\setlength{\baselineskip}{1.44\baselineskip}
+
 \begin{abstract}
 
   
@@ -78,9 +80,71 @@ mollis, magna orci ultrices dolor, at vulputate neque nulla lacinia
 eros.  Sed id ligula quis est convallis tempor.  Curabitur lacinia
 pulvinar nibh.  Nam a sapien.
 
-\section{Introduction}
+\section{Introduction (WIP)}
 
-Problem statement etc.
+\subsection{Distributed systems}
+
+A definition of \textit{distributed system} is
+\begin{quote}
+  A distributed system is a collection of autonomous computing
+  elements that appears to its users as a single, coherent
+  system.\cite{TanenbaumSteen06}
+\end{quote}
+
+The computing elements are typically called
+nodes\cite{TanenbaumSteen06}, which is the term we will use within.
+Nodes can be both hardware units, of software processes, while
+\textit{users} might refer both to humans and software processes.
+
+An example of a distributed system is multiplayer online game, where
+the game environment is experienced as a single system, while there
+are several nodes concerting the unified experience.  Another example
+is the World Wide Web, which you can view as a large key-value store,
+where Uniform Resource Locatiors (URL) are the key, and (typically)
+HTML-pages are their value.  In the case of the WWW, both humans and
+processes can considered users; indexing crawlers like Google are
+examples of computer process users.  The type of distributed systems
+we have studied, are \textit{Wireless Sensor Network}s (WSN), which is
+discussed further below.
+
+The type of distributed systems we have studied, are wireless sensor
+networks.  Here, the nodes are small, cheap devices, equipped with the
+ability to monitor environmental variables, like temperature,
+humidity, sound pollution and so on. [cite?]
+
+\subsection{Consensus}
+
+Autonomous nodes that are to appear as a single system must share some
+state.  For contrast, systems where there are master and slave nodes,
+synchronization of shared data is achieved by pushing data from the
+master to the slaves.  When nodes are ``peers'', consensus must be
+reached by other means, and it must be reached in the face of faulty
+or malicious nodes.
+
+An example of faults, \textit{Byzantine faults}, were described in
+Lamport, Shostak and Pease in a 1982 paper \cite{Lamport82}.  A group
+of Byzantine generals, each general commanding a division, is
+besieging a city.  They must reach an agreement on whether to all
+attack or all retreat, and they can only communicate through messages.
+There might be traiterous generals (faulty nodes), which send
+different messages to different generals while loyal generals always
+send the same message to all generals.
+
+\subsection{Clock Synchronization}
+
+There is not really a global clock in distributed systems.  In WSNs in
+particular, it is too expensive to have an atomic clock at every node.
+
+Depending on the application of the distributed system, different
+``levels'' of synchronization might be chosen.  
+
+Logical clocks \cite{Lamport78}, are chosen when it's only the strong
+ordering of events within the system that is necessary.  If $c(x)$ is
+a function of the system's ``clock'' at the point when event $x$.  Using
+$a \rightarrow b$ to mean $a$ precedes $b$, then the strong clock condition is that
+$a \rightarrow b \Rightarrow c(a) \rightarrow c(b)$
+
+[TDSM, sync with atomic, prior protocols?]
 
 \section{Theory}
 
