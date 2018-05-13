@@ -1,7 +1,7 @@
 \documentclass[a4paper,12pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[sorting=nyt]{biblatex}
+\usepackage[sorting=nyt,citestyle=authoryear]{biblatex}
 \addbibresource{report.bib}
 \usepackage[normalem]{ulem}
 \usepackage{hyperref}
@@ -42,19 +42,9 @@
 
 \begin{abstract}
 
-  
-  Nullam eu ante vel est convallis dignissim.  Fusce suscipit, wisi
-  nec facilisis facilisis, est dui fermentum leo, quis tempor ligula
-  erat quis odio.  Nunc porta vulputate tellus.  Nunc rutrum turpis
-  sed pede.  Sed bibendum.  Aliquam posuere.  Nunc aliquet, augue nec
-  adipiscing interdum, lacus tellus malesuada massa, quis varius mi
-  purus non odio.  Pellentesque condimentum, magna ut suscipit
-  hendrerit, ipsum augue ornare nulla, non luctus diam neque sit amet
-  urna.  Curabitur vulputate vestibulum lorem.  Fusce sagittis, libero
-  non molestie mollis, magna orci ultrices dolor, at vulputate neque
-  nulla lacinia eros.  Sed id ligula quis est convallis tempor.
-  Curabitur lacinia pulvinar nibh.  Nam a sapien.
-  
+Clock synchronization is a widely known problem that has many applications. E.g. multiple clients in a distributed system must agree on a single time in order to successfully tackle a problem. The problem has been worked on since the birth of computer networks, and solutions have evolved over time in response to changing demands. In recent years, consensus based algorithms have gained traction with the propagation of Internet of Things, and several new algorithms have been developed as a result.
+
+We will compare two recent consensus-based algorithms for clock synchronization in distributed systems, Average TimeSync (ATS) and Maximum Minimum Time Sync (MMTS), and implement them. The comparison will be based on the theoretical work from the algorithms' authors, our own analysis, and an implementation of both algorithms in virtual distributed networks.
 \end{abstract}
 
 \clearpage
@@ -66,73 +56,52 @@
 
 \section{Preface}
 
-Nullam eu ante vel est convallis dignissim.  Fusce suscipit, wisi nec
-facilisis facilisis, est dui fermentum leo, quis tempor ligula erat
-quis odio.  Nunc porta vulputate tellus.  Nunc rutrum turpis sed pede.
-Sed bibendum.  Aliquam posuere.  Nunc aliquet, augue nec adipiscing
-interdum, lacus tellus malesuada massa, quis varius mi purus non odio.
-Pellentesque condimentum, magna ut suscipit hendrerit, ipsum augue
-ornare nulla, non luctus diam neque sit amet urna.  Curabitur
-vulputate vestibulum lorem.  Fusce sagittis, libero non molestie
-mollis, magna orci ultrices dolor, at vulputate neque nulla lacinia
-eros.  Sed id ligula quis est convallis tempor.  Curabitur lacinia
-pulvinar nibh.  Nam a sapien.
-
 \section{Introduction}
 
 Problem statement etc.
 
 \section{Theory}
 
-Aliquam erat volutpat.  Nunc eleifend leo vitae magna.  In id erat non
-orci commodo lobortis.  Proin neque massa, cursus ut, gravida ut,
-lobortis eget, lacus.  Sed diam.  Praesent fermentum tempor tellus.
-Nullam tempus.  Mauris ac felis vel velit tristique imperdiet.  Donec
-at pede.  Etiam vel neque nec dui dignissim bibendum.  Vivamus id
-enim.  Phasellus neque orci, porta a, aliquet quis, semper a, massa.
-Phasellus purus.  Pellentesque tristique imperdiet tortor.  Nam
-euismod tellus id erat.
+\subsection{A distributed system}
 
-\section{Methods}
+At first we need to define the term "distributed system". In \cite{Lamport78} a distributed system is defined as "a collection of distinct processes which are spatially separated and communicate to with one another by exchanging messages". These processes are also referred to as nodes. As stated in \cite{TanenbaumSteen06} these nodes either be software or hardware processes. These processes are programmed to achieve common goals, through working to together, and further passing messages. 
 
-Aliquam erat volutpat.  Nunc eleifend leo vitae magna.  In id erat non
-orci commodo lobortis.  Proin neque massa, cursus ut, gravida ut,
-lobortis eget, lacus.  Sed diam.  Praesent fermentum tempor tellus.
-Nullam tempus.  Mauris ac felis vel velit tristique imperdiet.  Donec
-at pede.  Etiam vel neque nec dui dignissim bibendum.  Vivamus id
-enim.  Phasellus neque orci, porta a, aliquet quis, semper a, massa.
-Phasellus purus.  Pellentesque tristique imperdiet tortor.  Nam
-euismod tellus id erat.
+
+%Maybe elaborate a bit on this (although it shouldn't be "nice to have" knowledge, as per the report course).
+
+
+
+\subsection{Time synchronization}
+
+%Describe the time synchronization problem. Why is it necessary? Why is it not trivial?
+
+    %Clock drift
+
+In such a system where passing messages between nodes is essential and each node is separated. A single unified notion of time becomes an issue. Each node has a crystal, which keeps time. 
+
+    %Time sync in 
+ 
+
+%Describe the advantages and disadvantages of the different kinds of time synchronization strategies (non-consensus vs. consensus)
+    
+%Describe algorithms Average TimeSync and Modified Maximum Time Sync.
+
+\section{Analysis}%Or comparison
+
+Analyze the consensus-based algorithms Average TimeSync and Modified Maximum Time Sync. 
+
+Compare the algorithms, their advantages and disadvantages, and their areas of application (through both implementation and theoretical analysis).
 
 \section{Results}
 
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit.  Donec
-hendrerit tempor tellus.  Donec pretium posuere tellus.  Proin quam
-nisl, tincidunt et, mattis eget, convallis nec, purus.  Cum sociis
-natoque penatibus et magnis dis parturient montes, nascetur ridiculus
-mus.  Nulla posuere.  Donec vitae dolor.  Nullam tristique diam non
-turpis.  Cras placerat accumsan nulla.  Nullam rutrum.  Nam vestibulum
-accumsan nisl.
 
 \section{Discussion}
 
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit.  Donec
-hendrerit tempor tellus.  Donec pretium posuere tellus.  Proin quam
-nisl, tincidunt et, mattis eget, convallis nec, purus.  Cum sociis
-natoque penatibus et magnis dis parturient montes, nascetur ridiculus
-mus.  Nulla posuere.  Donec vitae dolor.  Nullam tristique diam non
-turpis.  Cras placerat accumsan nulla.  Nullam rutrum.  Nam vestibulum
-accumsan nisl.
+\section{Process analysis}%Not supposed to be in the report. Needs to be a separate document.
 
 \section{Conclusion}
 
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit.  Donec
-hendrerit tempor tellus.  Donec pretium posuere tellus.  Proin quam
-nisl, tincidunt et, mattis eget, convallis nec, purus.  Cum sociis
-natoque penatibus et magnis dis parturient montes, nascetur ridiculus
-mus.  Nulla posuere.  Donec vitae dolor.  Nullam tristique diam non
-turpis.  Cras placerat accumsan nulla.  Nullam rutrum.  Nam vestibulum
-accumsan nisl.
+
 
 \nocite{*} % print all bibliography, remove when actual citations are in place
 \printbibliography

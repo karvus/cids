@@ -1,0 +1,81 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\title{SATS: Secure Average-Consensus-Based Time Synchronization in Wireless Sensor Networks}
+
+\begin{document}
+\maketitle
+
+\section{Abstract}
+Discusses how ATS is a promising choice of protocol to be deployed in a hostile environment with risk of various malicious attacks since ATS doesn't depend on any reference node or network topology. However it is vulnerable to message manipulation attacks. 
+
+The paper discusses how to alter ATS to make it resistant to message manipulation. These alterations and security improvements to ATS form the secure average-consensus-based time synchronization protocol (SATS). The paper also proves that SATS guarantees time sync with an exponentially converging speed.
+
+\section{Introduction}
+References multiple previous synchronization protocols and explain how their assumption of benign environments make the vulnerable to attacks. Various examples of attacks are listed. The principle of ATS is shortly summarized. Message manipulation is further explained. Rather than forbidding malicious attacks they propose to pro-actively accept them and utilize the manipulated messages.
+
+\section{Related Work}
+Further summarizes previous suggested strategies and explains how they fail under certain attacks. Compares SATS to the previously mentioned protocols. 
+
+\section{System Model And Problem Setup}
+Nodes with $n(n > 3)$ safe nodes and $m(m >= 1)$ malicious nodes. Attack nodes can be both external and in-network nodes compromised by attackers. Nodes have identity numbers. Each node only knows whether it itself is an attack node. The following graph models the whole network.
+\begin{equation}
+    \mathcal{G}(t) = (\mathcal{V}, \mathcal{E}(t)) \nonumber
+\end{equation}
+Denotes the graphs composed by the attack nodes and the safe nodes respectively.
+\begin{align}
+    \mathcal{G}_a(t) = (\mathcal{V}_a, \mathcal{E}_a(t)) \nonumber\\
+    \mathcal{G}_s(t) = (\mathcal{V}_s, \mathcal{E}_s(t)) \nonumber
+\end{align}
+The following assumptions of the network are made.
+\begin{itemize}
+    \item The graph composed by safe nodes is always connected.
+    \item The attack nodes in the network are sparse and therefore never neighboring.
+    \item The communication between nodes is reliable.
+    \item Each node will send an authenticated message so that the receiving node can only read or copy the message.
+\end{itemize}
+
+\subsection{Clock Model}
+The clocks mentioned in this paper is modeled after the classic definition mentioned in the summary of \textit{Study of consensus-based time synchronization in wireless sensor networks}. The hardware clocks of each node are expressed in the same way as well.
+
+\subsection{Attack Model}
+Message manipulation includes dropping and transmitting fake synchronization messages. Attackers pretend to be safe nodes and corrupt the synchronization information. They mislead their neighbors. Replay attack adds negative time to the message. Delay attack adds delay to the message. 
+
+\section{Understanding ATS Under Attacks}
+
+\subsection{ATS Protocol/ ATS Performance Under Attacks}
+Part of the article explains the ATS protocol and it's performance under attacks. A graph showing the clock error under attacks shows that errors increase with number of broadcasts. ATS is not secure when attack nodes can freely change their skew and send false messages. Proven in this section.
+
+\section{Main Design of SATS}
+SATS consists of two checking processes that aim to guarantee that parameters sent from neighboring nodes have enough information for the convergence of the ATS algorithm.
+
+\subsection{Pseudo-Periodic Broadcast}
+Each node periodically sends a packet to it's neighbors under a common period T based on the nodes own hardware clock. Broadcasts instants $t_i(k)$ are defined as $\tau_i(t_i(k)) = kT$. The real broadcasting period is $T_i = \frac{T}{a_i}$. The mechanism is therefore referred to as pseudo-periodic.
+
+\subsection{Hardware Clock Checking Process}
+$s_ij(k)$ is the one-step relative skew estimation of node i for node j at the k + 1-th receiving round. 
+\begin{equation}
+    s_i_j(k) = \frac{\tau_j(t_k) - \tau_j(t_k_-_1)}{\tau_i(t_k) - \tau_i(t_k_-_1)} \nonumber
+\end{equation}
+The hardware clock reading is legal only if $s_i_j(k) = s_i_j(k-1)$. The protocol drops messages that don't fulfill this condition. Based on this process it is guarantee that clock readings remain as a linear function of the real time. Attack nodes have no chance to send false readings via messages.
+
+\subsection{Logical Clock Checking Process}
+$\Theta^j_i(t)$ is the information set of node i that is sent to it's neighbor node j.
+\begin{equation}
+    \Theta^j_i(t) = {i,\tau_i(t), \^{a}_i,\^{b}_i,a_i_j,(\tau_i(t^j_i),\tau_j(t^j_i))} \nonumber
+\end{equation}
+\begin{itemize}
+    \item i is the nodes ID number.
+    \item $\tau_i$ is the hardware clock reading.
+    \item $\^{a}_i$ and $\^{b}_i$ are adjusting parameters.
+    \item $a_i_j$ is the relative skews.
+    \item $(\tau_i(t^j_i),\tau_j(t^j_i))$ is one historical pair of hardware clock reading stored in node i.
+\end{itemize}
+Each node broadcasts it's own information as well as the information of it's two neighboring nodes. One neighbor has a smaller logical skew and the other has a larger logical skew. When node j receives the three sets of information from node i, it checks the following four conditions.
+\begin{itemize}
+    \item{$c_1$: $i \neq i_0 \neq i_1$ (Their id's are not the same)}
+    \item{$c_2$: $\frac{\tau_i(t^\mathcal{V}_i) - (t^i_\mathcal{V})}{\tau_\mathcal{V}(t_\mathcal{V}) - (t^i_\mathcal{V})} = a_\mathcal{V}_i$ and $\tau_i(t_i) - \tau(t^\tau_i)\leq \tilde{\mathrm{T}}$}
+\end{itemize}
+
+\end{document}
