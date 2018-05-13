@@ -1,0 +1,60 @@
+\documentclass{article}
+\usepackage{titlesec}
+\titleformat{\section}[block]{\Large\bfseries\filcenter}{}{1em}{}
+\begin{document}
+\section{Main papers}
+
+\subsection*{A Distributed Consensus Protocol for Synchronization in Wireless Sensor Networks (2007)}
+One of several AST papers. Good walkthrough of the basic details of time synchronization.
+
+\subsection*{Average TimeSynch: A consensus-based protocol for clock synchronization in wireless sensor networks (2010)}
+Main AST paper. References "A Distributed Consensus..." paper as preliminary work on AST. Provides experimental comparison of AST and the earlier FTSP protocol.
+
+\subsection*{SATS: Secure Average-Consensus-Based Time Synchronization in Wireless Sensor Networks (2013)}
+Improvement on AST, making it secure to malicious actors/nodes who use message manipulation to mess with the algorithm. This should be the algorithm we implement and compare (?)
+
+\subsection*{Time Synchronization in WSNs: A Maximum-Value-
+Based Consensus Approach (2013)}
+Proposes MTS, which doesn't handle communication delay, and WMTS which does. WMTS seems to take over the work of MMTS? TODO: figure out MMTS vs. WMTS
+
+\subsection*{Study of consensus-based time synchronization in wireless
+sensor networks (2013)}
+Compares AST and MTS experimentally, and proposes MMTS which is a modification of MTS that performs better in real life situations. This should be the algorithm we implement and compare (?)
+
+\vspace{4em}
+\section{Historical papers}
+
+\subsection*{An Election Algorithm for a Distributed Clock Synchronization Program (1985)}
+Describes the TEMPO synchronization algorithm. Not really useful except for historical perspective.
+
+\subsection*{The Accuracy of the Clock Synchronization Achieved by TEMPO in Berkeley UNIX 4.3BSD (1989)}
+Not super useful (?)
+
+\subsection*{Fine-Grained Network Time Synchronization using Reference Broadcasts (2002)}
+Presents the RBS protocol, which is intended as an improvement over NTP.
+
+\subsection*{The Flooding Time Synchronization Protocol (2004)}
+Proposes FTSP, which predates AST.
+
+\vspace{4em}
+\section{Theoretical papers}
+
+\subsection*{Time, Clocks, and the Ordering of Events in a Distributed System (1978)}
+Early paper on the meta-theory of logical clocks.
+
+\subsection*{The Byzantine Generals Problem (1982)}
+Introduces the Bynzantine Generals Problem.
+
+\subsection*{Byzantine Clock Synchronization (1984)}
+Short overview of the Byzantine problem, and 3 short failure-tolerant algorithms.
+
+\subsection*{Virtual Time and Global States of Distributed Systems (1988)}
+Talks about modelling time and clocks in a distributed system.
+
+\subsection*{Fault-Tolerant Clock Synchronization in Distributed Systems (1990)}
+In-depth overview of Byzantine problem and algorithms. Long newspaper-like article from NASA. Not super useful (?)
+
+\subsection*{Implementing Fault-Tolerant Services Using the State Machine Approach: A Tutorial (1990)}
+Talks about making server $\to$ client protocols fault-tolerant by replicating the servers/clients using state machines. Not super useful (?)
+
+\end{document}
