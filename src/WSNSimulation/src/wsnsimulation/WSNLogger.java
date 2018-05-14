@@ -55,11 +55,19 @@ public class WSNLogger {
                 str
         );
     }
+    
     public void fine(String template, Object[] params) {
         this.log(
                 Level.FINE,
                 template,
                 params
         );
+    }
+    
+    public void adv(Level level, String str, Object... params){
+        this.log(
+                level,
+                str,
+                params);
     }
 }
