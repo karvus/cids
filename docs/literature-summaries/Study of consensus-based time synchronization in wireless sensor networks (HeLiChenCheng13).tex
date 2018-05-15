@@ -63,7 +63,7 @@ $$ \^{a}_i \leftarrow \rho_v \^{a}_i + (1 - \rho_v) a_{ij} \^{a}_j $$
 $$ \^{b}_i \leftarrow \rho_o \^{b}_i + (1 - \rho_o) (t_j(t_1) - t_i(t_1)) $$
 with $\rho_n, \rho_v, \rho_o \in (0,1)$, with $1$ meaning no change from the stored value, and $0$ meaning set to the momentary values.
 
-This approach will slowly reach a local consensus amongst the node's neighbors, who in turn reach consensus with their neighbors, $...$, which eventually creates a global consensus across the network.
+This approach will slowly reach a local consensus amongst the node's neighbors, who in turn reach consensus with their neighbors, $...$, which eventually creates a global consensus across the network. The synchronization error increases with hop distance. Synchronization error between adjacent nodes is only weakly affected by network size. ATS is particularly suitable for TDMA(Time-division multiple access) communication scheduling in large networks. Useful for predicting synchronization error as a function of the synchronization period. 
 
 \subsection{MTS}
 
