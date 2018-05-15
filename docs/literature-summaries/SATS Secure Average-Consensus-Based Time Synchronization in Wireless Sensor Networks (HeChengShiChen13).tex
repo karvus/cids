@@ -76,6 +76,29 @@ Each node broadcasts it's own information as well as the information of it's two
 \begin{itemize}
     \item{$c_1$: $i \neq i_0 \neq i_1$ (Their id's are not the same)}
     \item{$c_2$: $\frac{\tau_i(t^\mathcal{V}_i) - (t^i_\mathcal{V})}{\tau_\mathcal{V}(t_\mathcal{V}) - (t^i_\mathcal{V})} = a_\mathcal{V}_i$ and $\tau_i(t_i) - \tau(t^\tau_i)\leq \tilde{\mathrm{T}}$}
+    \item{$c_3$: $\frac{\^a_i_0(t_i_0)}{\^a_i(t_i) a_i_0_i} \leq 1 \leq \frac{\^a_i_1(t_i_1)}{\^a_i(t_i) a_i_1_i} $}
+    \item {$c_4$: $\phi_i_i_0(t_i_0) \leq 0 \leq \phi_i_i_1(t_i_1)$, where $\phi_i_\mathcal{V}(t_\mathcal{V})$ is defined as
+        \begin{equation}
+            \phi_i_\mathcal{V}(t_\mathcal{V} = \^a_\mathcal{V}(t_\mathcal{V})\tau_\mathcal{V}(t^i_\mathcal{V})+\^b_\mathcal{V}(t_\mathcal{V})- \^a_i(t_i)\tau_i(t^i_\mathcal{V}) - \^b_i(t_i)
+        \end{equation}
+    where $\mathcal{V} = i_0, i_1$}
 \end{itemize}
+If conditions $c_1, c_2, c_3$ hold, then the logical clock updating parameter $\^a_i(t_i)$ is credible for node j; if conditions $c_1, c_2, c_4$ hold, the offset updating parameter $\^b_i(t_i)$  is credible for node j. A proof of this follows in the article.
+
+\subsection{SATS protocol}
+This section contains the actual process/pseudo code for SATS. All of it's steps and checks are described in this section. 
+
+\subsection{Convergence Analysis of SATS}
+The logical clock skew through the network will converge to a constant value exponentially. Convergence of SATS is obtained. Proof of this is located in appendix B of the paper.
+
+\subsection{Communication Delay and Attack Cooperation}
+SATS is not proven to converge under cooperation attacks. If neighboring attack nodes can collude, they can circumvent the checking processes and successfully pose as safe nodes to the other nodes. For their research, however, they assume that attack nodes are unable to cooperate. While communicaton delay does worsen the SATS protocol, time synchronization is still achieved.
+
+\section{Performance Evaluation}
+SATS is tested in a simulated network under different types of attacks and attack parameters. SATS is also compared to ATS in this section. Contains various graphs showing performance with increasing number of broadcasts.
+
+\section{Conclusion}
+They conclude that they have successfully illustrated ATS's vulnerability under message manipulation attacks and that their proposed solution, SATS, is an improvement. They analysis and simulation shows that with SATS the attackers may inconsciously help increase the time sync speed of the network.
+    
 
 \end{document}

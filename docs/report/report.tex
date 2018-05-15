@@ -11,6 +11,10 @@
 \usepackage[iso,danish]{isodate}
 \usepackage{fancyvrb}
 \usepackage{fancyhdr}
+\usepackage{fancyref}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{amsmath}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -58,22 +62,6 @@ We will compare two recent consensus-based algorithms for clock synchronization 
 
 \section{Preface}
 
-\section{Introduction}
-
-Problem statement etc.
-
-Nullam eu ante vel est convallis dignissim.  Fusce suscipit, wisi nec
-facilisis facilisis, est dui fermentum leo, quis tempor ligula erat
-quis odio.  Nunc porta vulputate tellus.  Nunc rutrum turpis sed pede.
-Sed bibendum.  Aliquam posuere.  Nunc aliquet, augue nec adipiscing
-interdum, lacus tellus malesuada massa, quis varius mi purus non odio.
-Pellentesque condimentum, magna ut suscipit hendrerit, ipsum augue
-ornare nulla, non luctus diam neque sit amet urna.  Curabitur
-vulputate vestibulum lorem.  Fusce sagittis, libero non molestie
-mollis, magna orci ultrices dolor, at vulputate neque nulla lacinia
-eros.  Sed id ligula quis est convallis tempor.  Curabitur lacinia
-pulvinar nibh.  Nam a sapien.
-
 \section{Introduction (WIP)}
 
 \subsection{Distributed systems}
@@ -86,11 +74,11 @@ A definition of \textit{distributed system} is
 \end{quote}
 
 The computing elements are typically called
-nodes\cite{TanenbaumSteen06}, which is the term we will use within.
+nodes \cite{TanenbaumSteen06}, which is the term we will use within.
 Nodes can be both hardware units, of software processes, while
 \textit{users} might refer both to humans and software processes.
 
-An example of a distributed system is multiplayer online game, where
+An example of a distributed system is a multi-player online game, where
 the game environment is experienced as a single system, while there
 are several nodes concerting the unified experience.  Another example
 is the World Wide Web, which you can view as a large key-value store,
@@ -142,25 +130,48 @@ $a \rightarrow b \Rightarrow c(a) \rightarrow c(b)$
 
 \section{Theory}
 
-\subsection{A distributed system}
-
-At first we need to define the term "distributed system". In \cite{Lamport78} a distributed system is defined as "a collection of distinct processes which are spatially separated and communicate to with one another by exchanging messages". These processes are also referred to as nodes. As stated in \cite{TanenbaumSteen06} these nodes either be software or hardware processes. These processes are programmed to achieve common goals, through working to together, and further passing messages. 
-
-
-%Maybe elaborate a bit on this (although it shouldn't be "nice to have" knowledge, as per the report course).
-
-
-
 \subsection{Time synchronization}
 
 %Describe the time synchronization problem. Why is it necessary? Why is it not trivial?
 
-    %Clock drift
+Time synchronization is the problem of having a network of nodes agree on the value of their local clock at a given instant. It is an important part of any distributed system that requires some level of sequentiality of events; examples include banks, where the order of withdrawing and depositing is important, sharded databases, where the order of insertions, modifications and deletions is important, and even our daily lives, where a shared clock is important for meeting and scheduling with other people.
 
-In such a system where passing messages between nodes is essential and each node is separated. A single unified notion of time becomes an issue. Each node has a crystal, which keeps time. 
+There are many different variants of the time synchronization problem, each with their own goals and disadvantages.
 
-    %Time sync in 
- 
+The most intuitive is the propagation of a "true" time throughout a network, as happens with our electronic devices today. For this approach one or more high-precision clock are seen as authoritative, and the value reported by them is propagated throughout the network and accepted at each node as the absolute truth. Unfortunately this is fragile to failed or malicious nodes near the root level. It is nonetheless the problem that must be solved if a known value must be propagated throughout the network.
+
+An alternative problem is reaching consensus on a shared time in a network, regardless of what said time is. This is useful for ensuring sequentiality of events within the network, and can be made highly resistant to failed or malicious nodes in the network, as no nodes have a greater weight than others when it comes to reaching consensus on a value. As such this problem is highly applicable to scenarios where the reliability of the consensus is important, and where the impact of nodes joining or leaving the network must be limited. It is primarily this problem we will be discussing in this paper.
+
+
+\subsubsection{Clock modelling}
+%Clock drift
+
+The hardware clock available to each node is often a low precision clock, whose time progression rate is not necessarily equal to that of other clocks. This means that over time, the output of the hardware clock will slowly drift away from other clocks. As the clock may have drifted considerably before the clock is observed, this also results in an initial time offset.
+
+For the sake of modelling such a clock the concept of a virtual absolute time $t$ is introduced. This time is not known to any nodes, but is a useful tool, as it allows us to express the output of a given clock as a function of the current absolute time.
+
+As such the local hardware clock $\tau$ of a node $i$ can be modelled as a linear function with two parameters, the skew $\alpha$ and the offset $\beta$:
+
+\begin{equation}\label{eq:hardware-clock}
+    \tau_i(t) = \alpha_i t + \beta_i.
+\end{equation}
+
+It is important to note that as $t$ is not known, neither $\alpha$ nor $\beta$ can be calculated directly. The only aspect of the hardware clock visible to the node is the output $\tau(t)$.
+
+As the goal of clock synchronization is to find a way for every node in a network to report the same time at a given $t$ despite differing hardware clocks, equation \ref{eq:hardware-clock} must be transformed into a function that can be modified by the node. For this reason, the concept of logical clocks $L$ is introduced, defined as
+
+\begin{align}
+    L_i(t) &= \hat\alpha_i \tau_i(t) + \hat\beta_i \nonumber \\
+        &= \hat\alpha_i \alpha_i t + \hat\alpha_i \beta_i + \hat\beta_i. \label{eq:logical-clock-expanded}
+\end{align}
+
+Modifying $\hat\alpha_i$ and $\hat\beta_i$ allows the node to change the output of the logical clock in relation to $t$, without knowing the parameters of the hardware clock $\tau$.
+
+The goal of reaching consensus can thus be formalized in terms of logical clocks: As equation \ref{eq:logical-clock-expanded} makes clear, having two logical clocks $L_i$ and $L_j$ agree on the output at a given $t$ means having the parameters $\hat\alpha_i \alpha_i \approx \hat\alpha_j \alpha_j$ and $\hat\alpha_i \beta_i + \hat\beta_i \approx \hat\alpha_j \beta_j + \hat\beta_j$. Note that this does not mean that $\hat\alpha_i \approx \hat\alpha_j$, nor that $\hat\beta_i \approx \hat\beta_j$, as the parameters of the hardware clocks are likely to differ.
+
+Expanding this to the entire network, reaching consensus can be formalized as reaching the point where $\hat\alpha_i \alpha_i \approx A$ and $\hat\alpha_i \beta_i + \hat\beta_i \approx B$, with $A$ and $B$ being network-global constants, for every node $i$ in the network.
+
+%Time sync in 
 
 %Describe the advantages and disadvantages of the different kinds of time synchronization strategies (non-consensus vs. consensus)
     
@@ -168,9 +179,12 @@ In such a system where passing messages between nodes is essential and each node
 
 \section{Analysis}%Or comparison
 
-Analyze the consensus-based algorithms Average TimeSync and Modified Maximum Time Sync. 
+Analyze the consensus-based algorithms Secure Average TimeSync and Modified Maximum Time Sync. 
 
 Compare the algorithms, their advantages and disadvantages, and their areas of application (through both implementation and theoretical analysis).
+
+\subsection{Secure Average-Consensus-Based Time Synchronization}
+
 
 \section{Results}
 
