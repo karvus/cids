@@ -61,14 +61,22 @@ public class MTSNode implements Node {
             comparingWith = target;
             lastTime = getTime();
             //Should probably get target time in a message with delay and such
+            // TODO: can't read time from another node
             lastTimeTarget = target.getTime();
         }
     }
+    
+    /**
+     * Gets the current time, as reported by the "hardware"
+     * @return The current time
+     */
+    private double getHardwareTime() {
+        return HARDW_SKEW * network.getTime() + HARDW_OFFSET;
+    }
 
-    @Override
-    public double getTime()
+    private double getTime()
     {
-        return correctionSkew * HARDW_SKEW * network.getTime() + HARDW_OFFSET + correctionOffset;
+        return correctionSkew * this.getHardwareTime() + correctionOffset;
     }
 
     @Override
@@ -101,6 +109,7 @@ public class MTSNode implements Node {
             compareAndUpdateTime( comparingWith );
         }
         else {
+            // TODO: can't read time from another node
             double time = getTime(), targetTime = comparingWith.getTime();
             
             

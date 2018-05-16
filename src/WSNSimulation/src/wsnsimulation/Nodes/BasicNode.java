@@ -19,6 +19,8 @@ public class BasicNode implements Node {
     private final double HARDW_OFFSET = RAND.nextGaussian() * 10;
     
     private boolean msgInFlight = false;
+    private double correctionSkew = 1.0;
+    private double correctionOffset = 0.0;
     
     private final int id;
     private final Network network;
@@ -58,9 +60,8 @@ public class BasicNode implements Node {
      * BasicNode doesn't implement a logical clock, so this is just hardware
      * @return The current logical time
      */
-    @Override
-    public double getTime() {
-        return this.getHardwareTime();
+    private double getTime() {
+        return correctionSkew * this.getHardwareTime() + correctionOffset;
     }
 
     /**

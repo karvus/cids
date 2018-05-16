@@ -11,11 +11,6 @@ public interface Node {
      */
     public int getID();
     /**
-     * Gets the current logical time of the node
-     * @return The current time, as reported by the Node's logical clock
-     */
-    public double getTime();
-    /**
      * Receives messages from another node
      * @param msg The message to receive
      * @param sender The Node that sent the message
