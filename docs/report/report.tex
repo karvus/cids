@@ -130,7 +130,7 @@ $a \rightarrow b \Rightarrow c(a) \rightarrow c(b)$
 
 \section{Theory}
 
-\subsection{Time synchronization}
+\subsection{Time synchronization} % Mostly done, might need to be split up
 
 %Describe the time synchronization problem. Why is it necessary? Why is it not trivial?
 
@@ -138,7 +138,7 @@ Time synchronization is the problem of having a network of nodes agree on the va
 
 There are many different variants of the time synchronization problem, each with their own goals and disadvantages.
 
-The most intuitive is the propagation of a "true" time throughout a network, as happens with our electronic devices today. For this approach one or more high-precision clock are seen as authoritative, and the value reported by them is propagated throughout the network and accepted at each node as the absolute truth. Unfortunately this is fragile to failed or malicious nodes near the root level. It is nonetheless the problem that must be solved if a known value must be propagated throughout the network.
+The most intuitive is the propagation of a "true" time throughout a network, as happens with our electronic devices today. For this approach one or more high-precision clock are seen as authoritative, and the value reported by them is propagated throughout the network and accepted at each node as the absolute truth. Unfortunately this is fragile to failed or malicious nodes near the root level. It is nonetheless the problem that must be solved if a known time must be propagated throughout the network.
 
 An alternative problem is reaching consensus on a shared time in a network, regardless of what said time is. This is useful for ensuring sequentiality of events within the network, and can be made highly resistant to failed or malicious nodes in the network, as no nodes have a greater weight than others when it comes to reaching consensus on a value. As such this problem is highly applicable to scenarios where the reliability of the consensus is important, and where the impact of nodes joining or leaving the network must be limited. It is primarily this problem we will be discussing in this paper.
 
@@ -173,8 +173,27 @@ Expanding this to the entire network, reaching consensus can be formalized as re
 
 %Time sync in 
 
+\subsection{Strategies for time synchronization (WIP(Peter))}
+
 %Describe the advantages and disadvantages of the different kinds of time synchronization strategies (non-consensus vs. consensus)
+By in-large there are two ways of approaching the time synchronization problem, these being consensus and non-consensus based algorithms.
+
+    \subsubsection{Non-consensus}
+    %In general about non-consensus
+    Examples of non-consensus time synchronization algorithms are The Berkeley algorithm, Reference Broadcast Synchronization (RBS) and The Flooding Time Sync Protocol (FTSP). Both of these algorithms incorporate some form of master-slave relationship. 
     
+    %Not sure if it should be included
+    \paragraph{The Berkeley algorithm} The simplest algorithms is the Berkeley algorithm (\cite{Gusella89}), it works by having a centralized time server polling the nodes for their current clock value. The time server then averages these clock values, along with its own clock value. The time server then tells each node to adjust to the averaged clock value. 
+    
+    \paragraph{RBS} The Reference Broadcast algorithm functions by a central node sending out a reference packet to each node. Each node then records the time at which the reference packet was received. The nodes should then compare their results, to calculate local time. 
+    
+    \paragraph{FTSP}
+    
+    \subsubsection{Consensus}
+    %In general about consensus based algorihms
+    
+    
+
 %Describe algorithms Average TimeSync and Modified Maximum Time Sync.
 
 \section{Analysis}%Or comparison
