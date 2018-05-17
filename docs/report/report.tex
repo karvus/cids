@@ -185,7 +185,19 @@ By in-large there are two ways of approaching the time synchronization problem, 
     %Not sure if it should be included
     \paragraph{The Berkeley algorithm} The simplest algorithms is the Berkeley algorithm (\cite{Gusella89}), it works by having a centralized time server polling the nodes for their current clock value. The time server then averages these clock values, along with its own clock value. The time server then tells each node to adjust to the averaged clock value. 
     
-    \paragraph{RBS} The Reference Broadcast algorithm functions by a central node sending out a reference packet to each node. Each node then records the time at which the reference packet was received. The nodes should then compare their results, to calculate local time. 
+    \paragraph{RBS} The Reference Broadcast algorithm, described by \cite{ElsonGirodEstrin02},  functions by a central node sending out a reference packet to each node. Each node then records the time at which the reference packet was received. %Exhanging of recorded clock times? 
+    The nodes should then compare their results. This is done by calculating their offset relative to another receiver. The offset is calculated by 
+    \begin{equation}
+        \label{offsetcalc}
+        \textit{Offset} [i,j] = \frac{1}{M}\sum^M_{k=1} (T_{j,k} - T_{i,k})
+    \end{equation}
+    where $i$ and $j$ are two nodes and $T_{p,a}$ is $p$'s clock when it received broadcast $a$. $M$ is the number of reference broadcasts.  %Handling of clock skew.
+    However calculating the offset of a node's clock relative to another, and vice versa is not enough as it doesn't take clock drift into account. However this can be solved by using linear regression to get the offset as a function.
+    $$\textit{Offset}[i,j](t) = \alpha t + \beta$$
+    This allows for a more accurate estimation of a nodes current clock value by another node.
+    
+    
+   
     
     \paragraph{FTSP}
     
@@ -197,12 +209,15 @@ By in-large there are two ways of approaching the time synchronization problem, 
 %Describe algorithms Average TimeSync and Modified Maximum Time Sync.
 
 \section{Analysis}%Or comparison
+To analyze each of the two aforementioned Synchronization protocols we first researched their creation and how each of them function. What follows in this section is a short description of each of the protocols, Average Time Synchronization (ATS) and Modified Maximum Time Synchronization (MMTS). We'll describe how they function and discuss their advantages and disadvantages in certain situations and areas of application as well as their performance in an implemented simulated Wireless Sensor Network. Their performance will be compared on their synchronization accuracy and speed in the simulation.
 
-Analyze the consensus-based algorithms Secure Average TimeSync and Modified Maximum Time Sync. 
+%Perhaps have the description of the consensus algorithms in the previous section.
 
-Compare the algorithms, their advantages and disadvantages, and their areas of application (through both implementation and theoretical analysis).
+%Analyze the consensus-based algorithms Average TimeSync and Modified Maximum Time Sync. 
+%Compare the algorithms, their advantages and disadvantages, and their areas of application (through both %implementation and theoretical analysis).
 
-\subsection{Secure Average-Consensus-Based Time Synchronization}
+\subsection{Average Time Synchronization Protocol}
+
 
 
 \section{Results}
