@@ -180,10 +180,12 @@ By in-large there are two ways of approaching the time synchronization problem, 
 
     \subsubsection{Non-consensus}
     %In general about non-consensus
-    Examples of non-consensus time synchronization algorithms are The Berkeley algorithm, Reference Broadcast Synchronization (RBS) and The Flooding Time Sync Protocol (FTSP). Both of these algorithms incorporate some form of master-slave relationship. 
+    Examples of non-consensus time synchronization algorithms are The Berkeley algorithm, Reference Broadcast Synchronization (RBS) and The Flooding Time Sync Protocol (FTSP). All of these algorithms incorporate some form of master-slave relationship. Regarding RBS and FTSP, these are tailored to Wireless Sensor Networks (WSN).
     
     %Not sure if it should be included
     \paragraph{The Berkeley algorithm} The simplest algorithms is the Berkeley algorithm (\cite{Gusella89}), it works by having a centralized time server polling the nodes for their current clock value. The time server then averages these clock values, along with its own clock value. The time server then tells each node to adjust to the averaged clock value. 
+    
+    %\paragraph{NTP}
     
     \paragraph{RBS} The Reference Broadcast algorithm, described by \cite{ElsonGirodEstrin02},  functions by a central node sending out a reference packet to each node. Each node then records the time at which the reference packet was received. %Exhanging of recorded clock times? 
     The nodes should then compare their results. This is done by calculating their offset relative to another receiver. The offset is calculated by 
@@ -196,10 +198,11 @@ By in-large there are two ways of approaching the time synchronization problem, 
     $$\textit{Offset}[i,j](t) = \alpha t + \beta$$
     This allows for a more accurate estimation of a nodes current clock value by another node.
     
+    \paragraph{TPSN}
     
-   
+    \paragraph{FTSP} %allegedly one of the best non-consensus algorithms
     
-    \paragraph{FTSP}
+    The Flooding Time Sync Protocol, described by \cite{Maroti04}
     
     \subsubsection{Consensus}
     %In general about consensus based algorihms
@@ -231,7 +234,7 @@ To analyze each of the two aforementioned Synchronization protocols we first res
 
 
 
-\nocite{*} % print all bibliography, remove when actual citations are in place
+%\nocite{*} % print all bibliography, remove when actual citations are in place
 \printbibliography
 
 
