@@ -12,8 +12,11 @@
 \usepackage{fancyvrb}
 \usepackage{fancyhdr}
 \usepackage{fancyref}
+\usepackage{float}
 \usepackage{tikz}
+\usetikzlibrary{arrows.meta}
 \usepackage{pgfplots}
+\pgfplotsset{compat=1.15}
 \usepackage{amsmath}
 
 \pagestyle{fancy}
@@ -198,7 +201,38 @@ By in-large there are two ways of approaching the time synchronization problem, 
     $$\textit{Offset}[i,j](t) = \alpha t + \beta$$
     This allows for a more accurate estimation of a nodes current clock value by another node.
     
-    \paragraph{TPSN}
+    %Post-facto synchronization
+    
+    \paragraph{TPSN} The Timing-sync Protocol for Sensor Networks protocol, described by \cite{GaneriwalEtAl03}, functions by selecting a node as the root node. At first the algorithm enters the "level discovery phase", in this  phase each node is assigned a level. This is done the root node sending out a \texttt{level\_discovery} packet. Then each node assigns itself to a level lower than from which at received the packet. This node then broadcasts a \texttt{level\_discovery}. The algorithms then enters the synchronization phase, it uses sender-receiver synchronization. This sets it apart from RBS, which uses receiver-receiver synchronization. This mean that the receiver synchronizes to the sender. The time is synchronized by calculating the clock drift and the propagation time between nodes. As seen on figure \ref{timemeasuretpsn}, the receiver node A sends a synchronization pulse to the sender B, which is located at a greater level. Node A sends a synchronization pulse to B, which in turn sends back an acknowledgement packet. This acknowledgement packet contains the values of $T_1$, $T_2$ and $T_3$. Then the final time $T_4$ is recorded by node A. From these values the clock drift ($\Delta$) and propagation delay ($d$) between the two nodes can be calculated. 
+    
+    $$\Delta = \frac{(T_2-T_1) - (T_4 - T_3)}{2} \quad ; \quad d = \frac{(T_2-T_1) + (T_4-T_3)}{2}$$
+    
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+            \draw [line width = 1.5pt](0,0) node (upper-line-start){}
+                  -- (5,0) node (upper-line-end){};
+            \draw [line width = 1.5pt](0,-2) node (lower-line-start){}
+                  -- (5,-2) node (lower-line-end){};
+            \node [left of = upper-line-start, node distance = 0.5cm](){B};
+            \node [left of = lower-line-start, node distance = 0.5cm](){A};
+            \draw [arrows={-Stealth[length = 7.5pt]}, line width = 1pt] (0.5,-2) node (first-line-start){}
+                  -- (2,0) node (first-line-end){};
+            \draw [arrows={-Stealth[length = 7.5pt]}, line width = 1pt] (3,0) node (last-line-start){}
+                  -- (4.5,-2) node (last-line-end){};
+            \node [below of = first-line-start, node distance = 0.35cm] (){\small $T_1$};
+            \node [above of = first-line-end, node distance = 0.35cm] (){\small $T_2$};
+            \node [above of = last-line-start, node distance = 0.35cm] (){\small $T_3$};
+            \node [below of = last-line-end, node distance = 0.35cm] (){\small $T_4$};
+         \end{tikzpicture}
+         \caption{A model of communication between nodes. $T_1$ and $T_4$ are recorded on the clock of node A, and $T_2$ and $T_3$ on the clock of node B}
+        \label{timemeasuretpsn}
+    \end{figure}
+    
+    In general the synchronization is initiated by the root node. By instructing level 1 nodes to synchronize to the root node. When the level 1 nodes are synchronized, the level 2 nodes are synchronized and so forth. 
+    
+    %Level discovery and hierarchical structure
+    %
     
     \paragraph{FTSP} %allegedly one of the best non-consensus algorithms
     
