@@ -8,6 +8,7 @@ import java.util.logging.Level;
  * @authors jofag17, luols17, moell17, perat17, tsten16
  */
 public class WSNLogger {
+    private final String COL_PRE = "\u001B[";
     private final String name;
     private Level level = Level.INFO;
     private Network network;
@@ -16,9 +17,16 @@ public class WSNLogger {
         this.network = network;
     }
     
+    /** Prefixed and postfixes a terminal color code */
+    private String col(int code) {
+        return "\u001B["+code+"m";
+    }
+    
     /** Get the string that should be put before a log line */
     private String getPrefix(Level level) {
-        return this.network.getTime()+" ["+level.getName()+" "+this.name+"] ";
+        return col(34)+this.network.getTime()
+                +col(0)+col(2)+col(90)+" ["+level.getName()+" "+this.name+"] "
+                +col(0);
     }
     
     /** Log a message at the specified level */
@@ -55,7 +63,6 @@ public class WSNLogger {
                 str
         );
     }
-    
     public void fine(String template, Object[] params) {
         this.log(
                 Level.FINE,
