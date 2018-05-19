@@ -65,11 +65,32 @@ public class Network {
     }
     
     /**
+     * Calculates the mean squared error of node clocks vs the average of all node clocks
+     * Is used as a measure of how well the time synchronization is doing (lower = better)
+     */
+    private double averageTimeError() {
+        double[] nodeTimes = new double[this.nodeList.size()];
+        double sumNodeTimes = 0.0;
+        for (int i = 0; i < this.nodeList.size(); ++i) {
+            nodeTimes[i] = this.nodeList.get(i).getTime();
+            sumNodeTimes += nodeTimes[i];
+        }
+        double averageTime = sumNodeTimes / (double) nodeTimes.length;
+        
+        double error = 0.0;
+        for (double nodeTime : nodeTimes) {
+            error += Math.pow(nodeTime - averageTime, 2);
+        }
+        return error;
+    }
+    
+    /**
      * Simulates a single millisecond of time passing
      */
     public void simulate() {
         ++this.time;
         LOGGER.fine("Simulating tick "+this.time);
+        LOGGER.info("Error is "+this.averageTimeError());
         
         // send off all messages that are ready to be sent
         while (msgQueue.size() > 0

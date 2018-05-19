@@ -5,7 +5,7 @@ import wsnsimulation.MMTS.MMTSNode;
 /**
  * @authors jofag17, luols17, moell17, perat17, tsten16
  */
-public class Simulation {
+public class Simulation {    
     /**
      * @param args the command line arguments
      */
@@ -25,11 +25,11 @@ public class Simulation {
             network.addNode(nodes[i]);
             // update previous node's neighbors to be us
             if (i > 0) {
-                ((MMTSNode) nodes[i - 1]).setNeighbors(new Node[]{nodes[i]});
+                nodes[i - 1].setNeighbors(new Node[]{nodes[i]});
             }
         }
         // close the ring
-        ((MMTSNode) nodes[nodes.length - 1]).setNeighbors(new Node[]{nodes[0]});
+        nodes[nodes.length - 1].setNeighbors(new Node[]{nodes[0]});
         
         for (int i = 0; i < 100; ++i) {
             network.simulate();

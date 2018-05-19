@@ -9,8 +9,8 @@ import java.util.Random;
 public abstract class Node {
     protected final WSNLogger LOGGER;
     protected final Random RAND = new Random();
-    protected final double HARDW_SKEW = 1.0/*1.0 + RAND.nextGaussian() * 0.33*/;
-    protected final double HARDW_OFFSET = 0.0/*RAND.nextGaussian() * 10*/;
+    protected final double HARDW_SKEW = 1.0 + RAND.nextGaussian() * 0.33;
+    protected final double HARDW_OFFSET = RAND.nextGaussian() * 10;
     protected double correctionSkew = 1.0; // must be changed by the algo
     protected double correctionOffset = 0.0; // must be changed by the algo
     protected final int id;
