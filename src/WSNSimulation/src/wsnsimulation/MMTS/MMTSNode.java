@@ -42,22 +42,25 @@ public class MMTSNode extends Node {
             MMTSMessage.Parameters theirData, NeighborData prevData) {
         double newSkew = (
                 // (t_j(t_k) - t_j(t_k-1))/(t_i(t_k) - t_i(t_k-1))
-                (theirData.time - prevData.prevMsgSent)/(this.getTime() - prevData.prevMsgReceived)
+                (theirData.time - prevData.prevMsgSent)/(this.getHardwareTime() - prevData.prevMsgReceived)
                 // + (k-1)*a_ij(k-1)
                 + (prevData.k - 1) * prevData.relativeSkew
         ) / prevData.k;
-        String msg = "Relative skew:";
-        msg += "\n  Our HARDWARE: "+HARDW_SKEW+" : "+HARDW_OFFSET;
-        msg += "\n  Their HARDWARE: "+prevData.neighbor.HARDW_SKEW+" : "+prevData.neighbor.HARDW_OFFSET;
-        msg += "\n  Our correction: "+this.correctionSkew+" : "+this.correctionOffset;
-        msg += "\n  Their correction: "+prevData.neighbor.correctionSkew+" : "+prevData.neighbor.correctionOffset;
-        msg += "\n  Prev timings: "+prevData.prevMsgSent+"->"+prevData.prevMsgReceived;
-        msg += "\n  New timings:  "+theirData.time+"->"+this.getTime();
-        msg += "\n  Their interval: "+(theirData.time - prevData.prevMsgSent);
-        msg += "\n  Our interval: "+(this.getTime() - prevData.prevMsgReceived);
-        msg += "\n  Weighted previous skew: "+((prevData.k - 1) * prevData.relativeSkew);
-        msg += "\n  New skew: "+newSkew;
-        LOGGER.fine(msg);
+        
+        if (DEBUG) {
+            String msg = "Relative skew:";
+            msg += "\n  Our HARDWARE: "+HARDW_SKEW+" : "+HARDW_OFFSET;
+            msg += "\n  Their HARDWARE: "+prevData.neighbor.HARDW_SKEW+" : "+prevData.neighbor.HARDW_OFFSET;
+            msg += "\n  Our correction: "+this.correctionSkew+" : "+this.correctionOffset;
+            msg += "\n  Their correction: "+prevData.neighbor.correctionSkew+" : "+prevData.neighbor.correctionOffset;
+            msg += "\n  Prev timings: "+prevData.prevMsgSent+"->"+prevData.prevMsgReceived;
+            msg += "\n  New timings:  "+theirData.time+"->"+this.getHardwareTime();
+            msg += "\n  Their interval: "+(theirData.time - prevData.prevMsgSent);
+            msg += "\n  Our interval: "+(this.getHardwareTime() - prevData.prevMsgReceived);
+            msg += "\n  Weighted previous skew: "+((prevData.k - 1) * prevData.relativeSkew);
+            msg += "\n  New skew: "+newSkew;
+            LOGGER.fine(msg);
+        }
         return newSkew;
     }
 
@@ -68,7 +71,9 @@ public class MMTSNode extends Node {
      */
     @Override
     public void receiveMessage(Message msg, Node sender) {
-        LOGGER.fine("Received message at "+this.getTime()+" from "+sender.getID()+": "+msg);
+        if (DEBUG) {
+            LOGGER.fine("Received message at "+this.getTime()+" from "+sender.getID()+": "+msg);
+        }
         
         MMTSMessage.Parameters theirData = ((MMTSMessage) msg).getData();
         
@@ -79,14 +84,20 @@ public class MMTSNode extends Node {
             ++prevData.k;
             
             // calculate our new averaged relative skew
-            LOGGER.fine("Relative skew was "+prevData.relativeSkew);
+            if (DEBUG) { LOGGER.fine("Relative skew was "+prevData.relativeSkew); }
             double relativeSkew = this.calculateRelativeSkew(theirData, prevData);
-            LOGGER.fine("Relative skew became "+relativeSkew);
+            if (DEBUG) { LOGGER.fine("Relative skew became "+relativeSkew); }
             
             double skewMax = correctionSkew + mu;
             double skewMin = correctionSkew - mu;
             double offsetMax = correctionOffset + nu;
             double offsetMin = correctionOffset - nu;
+            if (skewMax == 0 || skewMin == 0) {
+                LOGGER.err("Skew max/min was zero: max="+skewMax+", min="+skewMin
+                    +"\n  correctionSkew: "+correctionSkew
+                    +"\n  mu: "+mu);
+                System.exit(1);
+            }
             double p = (relativeSkew * (theirData.correctionSkew + theirData.mu))
                     / skewMax;
             double q = (relativeSkew * (theirData.correctionSkew - theirData.mu))
@@ -94,43 +105,45 @@ public class MMTSNode extends Node {
             
             // apply maximum consensus if applicable
             if (p > 1.0) {
-                LOGGER.fine("Applying maximum consensus: "+p);
+                if (DEBUG) { LOGGER.fine("Applying maximum consensus: "+p); }
                 skewMax = relativeSkew * (theirData.correctionSkew + theirData.mu);
                 offsetMax = (theirData.correctionSkew + theirData.mu)*theirData.time
                         + theirData.correctionOffset + theirData.nu
-                        - relativeSkew * (theirData.correctionSkew + theirData.mu)*this.getTime();
+                        - relativeSkew * (theirData.correctionSkew + theirData.mu)*this.getHardwareTime();
             } else if (p == 1.0) {
-                LOGGER.fine("Applying strict maximum consensus: "+p);
-                double i_variant = (this.correctionSkew + this.mu)*this.getTime()
+                if (DEBUG) { LOGGER.fine("Applying strict maximum consensus: "+p); }
+                double i_variant = (this.correctionSkew + this.mu)*this.getHardwareTime()
                         + this.correctionOffset + this.nu;
                 double j_variant = (theirData.correctionSkew + theirData.mu)*theirData.time
                         + theirData.correctionOffset + theirData.nu;
                 
                 offsetMax = Math.max(i_variant, j_variant)
-                        - (this.correctionSkew + this.mu) * this.getTime();
+                        - (this.correctionSkew + this.mu) * this.getHardwareTime();
             }
             // apply minimum consensus if applicable
             if (q < 1.0) {
-                LOGGER.fine("Applying minimum consensus: "+q);
+                if (DEBUG) { LOGGER.fine("Applying minimum consensus: "+q); }
                 skewMin = relativeSkew * (theirData.correctionSkew - theirData.mu);
                 offsetMin = (theirData.correctionSkew - theirData.mu)*theirData.time
                         + theirData.correctionOffset - theirData.nu
-                        - relativeSkew * (theirData.correctionSkew - theirData.mu)*this.getTime();
+                        - relativeSkew * (theirData.correctionSkew - theirData.mu)*this.getHardwareTime();
             } else if (q == 1.0) {
-                LOGGER.fine("Applying strict minimum consensus: "+q);
-                double i_variant = (this.correctionSkew - this.mu)*this.getTime()
+                if (DEBUG) { LOGGER.fine("Applying strict minimum consensus: "+q); }
+                double i_variant = (this.correctionSkew - this.mu)*this.getHardwareTime()
                         + this.correctionOffset - this.nu;
                 double j_variant = (theirData.correctionSkew - theirData.mu)*theirData.time
                         + theirData.correctionOffset - theirData.nu;
                 
                 offsetMax = Math.min(i_variant, j_variant)
-                        - (this.correctionSkew - this.mu) * this.getTime();
+                        - (this.correctionSkew - this.mu) * this.getHardwareTime();
             }
             
-            String log = "Before processing:";
-            log += "\n  a,b: "+this.correctionSkew+" , "+this.correctionOffset;
-            log += "\n  y,v: "+this.mu+" , "+this.nu;
-            LOGGER.fine(log);
+            if (DEBUG) {
+                String log = "Before processing:";
+                log += "\n  a,b: "+this.correctionSkew+" , "+this.correctionOffset;
+                log += "\n  y,v: "+this.mu+" , "+this.nu;
+                LOGGER.fine(log);
+            }
             
             // change our parameters as needed
             this.correctionSkew = (skewMax + skewMin) / 2;
@@ -138,22 +151,24 @@ public class MMTSNode extends Node {
             this.mu = (skewMax - skewMin) / 2;
             this.nu = (offsetMax - offsetMin) / 2;
             
-            log = "After processing:";
-            log += "\n  aMax,aMin: "+skewMax+" , "+skewMin;
-            log += "\n  bMax,bMin: "+offsetMax+" , "+offsetMin;
-            log += "\n  a,b: "+this.correctionSkew+" , "+this.correctionOffset;
-            log += "\n  y,v: "+this.mu+" , "+this.nu;
-            LOGGER.fine(log);
+            if (DEBUG) {
+                String log = "After processing:";
+                log += "\n  aMax,aMin: "+skewMax+" , "+skewMin;
+                log += "\n  bMax,bMin: "+offsetMax+" , "+offsetMin;
+                log += "\n  a,b: "+this.correctionSkew+" , "+this.correctionOffset;
+                log += "\n  y,v: "+this.mu+" , "+this.nu;
+                LOGGER.fine(log);
+            }
             
             // and store our new data
             prevData.relativeSkew = relativeSkew;
-            prevData.prevMsgReceived = this.getTime();
+            prevData.prevMsgReceived = this.getHardwareTime();
             prevData.prevMsgSent = theirData.time;
         } else {
             // otherwise we must initialize some data for later averaging
             NeighborData data = new NeighborData();
             data.prevMsgSent = theirData.time;
-            data.prevMsgReceived = this.getTime();
+            data.prevMsgReceived = this.getHardwareTime();
             data.neighbor = sender;
             
             this.neighborDatas.put(
@@ -170,7 +185,7 @@ public class MMTSNode extends Node {
         LOGGER.finer("Simulating: "+this.getTime()+", "+(this.lastMsgTime + BROADCAST_PERIOD));
         
         // MMTS has every node broadcast periodically
-        if (this.getTime() > this.lastMsgTime + BROADCAST_PERIOD) {
+        if (this.getHardwareTime() > this.lastMsgTime + BROADCAST_PERIOD) {
             MMTSMessage msg = new MMTSMessage(
                     this.getHardwareTime(),
                     correctionSkew,
@@ -185,7 +200,7 @@ public class MMTSNode extends Node {
             }
             
             // and make sure we don't send again before we should
-            this.lastMsgTime = this.getTime();
+            this.lastMsgTime = this.getHardwareTime();
         }
     }
 

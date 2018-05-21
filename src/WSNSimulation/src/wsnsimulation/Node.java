@@ -7,6 +7,7 @@ import java.util.Random;
  * @authors jofag17, luols17, moell17, perat17, tsten16
  */
 public abstract class Node {
+    protected static final boolean DEBUG = Simulation.DEBUG;
     protected final WSNLogger LOGGER;
     protected final Random RAND = new Random();
     public final double HARDW_SKEW = 1.0 + RAND.nextGaussian() * 0.0001; // 10^-4 as described in MMTS paper

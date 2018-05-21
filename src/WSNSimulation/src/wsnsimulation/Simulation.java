@@ -6,6 +6,8 @@ import wsnsimulation.MMTS.MMTSNode;
  * @authors jofag17, luols17, moell17, perat17, tsten16
  */
 public class Simulation {    
+    public static final boolean DEBUG = true;
+    
     /**
      * @param args the command line arguments
      */
@@ -15,7 +17,7 @@ public class Simulation {
         
         // create a 3x3 grid of nodes
         // nodes can only send messages up/to the side
-        Node[][] nodes = new MMTSNode[5][4];
+        Node[][] nodes = new MMTSNode[5][5];
         for (int i = 0; i < nodes.length; ++i) {
             for (int j = 0; j < nodes[i].length; ++j) {
                 nodes[i][j] = new MMTSNode(

@@ -10,6 +10,8 @@ import java.util.PriorityQueue;
  * @authors jofag17, luols17, moell17, perat17, tsten16
  */
 public class Network {
+    private static final boolean DEBUG = Simulation.DEBUG;
+    
     /**
      * Representation of a message while it is being delayed
      * Used in the PriorityQueue of messages
@@ -119,10 +121,13 @@ public class Network {
      * @param sender The node that sent the message
      */
     public void sendMessage(Message msg, Node recipient, Node sender) {
-        LOGGER.fine(
-                "Sending message {0} ({1} -> {2})",
-                new Object[]{msg, sender, recipient}
-        );
+        if (DEBUG) {
+            LOGGER.fine(
+                    "Sending message {0} ({1} -> {2})",
+                    new Object[]{msg, sender, recipient}
+            );
+        }
+        
         // we delay sending the message to simulate real life uncertainties
         WaitingMessage delayedMsg = new WaitingMessage(
                 msg,
