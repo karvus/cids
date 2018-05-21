@@ -9,10 +9,10 @@ import java.util.Random;
 public abstract class Node {
     protected final WSNLogger LOGGER;
     protected final Random RAND = new Random();
-    protected final double HARDW_SKEW = 1.0 + RAND.nextGaussian() * 0.33;
-    protected final double HARDW_OFFSET = RAND.nextGaussian() * 10;
-    protected double correctionSkew = 1.0; // must be changed by the algo
-    protected double correctionOffset = 0.0; // must be changed by the algo
+    public final double HARDW_SKEW = 1.0 + RAND.nextGaussian() * 0.0001; // 10^-4 as described in MMTS paper
+    public final double HARDW_OFFSET = RAND.nextGaussian() * 10;
+    public double correctionSkew = 1.0; // must be changed by the algo
+    public double correctionOffset = 0.0; // must be changed by the algo
     protected final int id;
     protected final Network network;
     protected Node[] neighbors;

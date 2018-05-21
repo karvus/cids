@@ -24,8 +24,17 @@ public class WSNLogger {
     
     /** Get the string that should be put before a log line */
     private String getPrefix(Level level) {
+        String levelName = level.getName();
+        if (level == Level.FINER) {
+            levelName = "FINR";
+        } else if (level == Level.WARNING) {
+            levelName = "WARN";
+        } else if (level == Level.SEVERE) {
+            levelName = "SEVR";
+        }
+        
         return col(34)+this.network.getTime()
-                +col(0)+col(2)+col(90)+" ["+level.getName()+" "+this.name+"] "
+                +col(0)+col(2)+col(90)+" ["+levelName+" "+this.name+"] "
                 +col(0);
     }
     
@@ -39,6 +48,36 @@ public class WSNLogger {
     }
     public void log(Level level, String template, Object[] params) {
         this.log(level, MessageFormat.format(template, params));
+    }
+    
+    /** Log a message as an error at the SEVERE level */
+    public void err(String str) {
+        this.log(
+                Level.SEVERE,
+                col(41) + str.replaceAll("\n", "\n"+col(41)) + col(0)
+        );
+    }
+    public void err(String template, Object[] params) {
+        this.log(
+                Level.SEVERE,
+                col(41) + template.replaceAll("\n", "\n"+col(41)) + col(0),
+                params
+        );
+    }
+    
+    /** Log a message as a warning at the WARNING level */
+    public void warn(String str) {
+        this.log(
+                Level.WARNING,
+                col(43) + str.replaceAll("\n", "\n"+col(43)) + col(0)
+        );
+    }
+    public void warn(String template, Object[] params) {
+        this.log(
+                Level.WARNING,
+                col(43) + template.replaceAll("\n", "\n"+col(43)) + col(0),
+                params
+        );
     }
     
     /** Log a message at the INFO level */
@@ -66,6 +105,21 @@ public class WSNLogger {
     public void fine(String template, Object[] params) {
         this.log(
                 Level.FINE,
+                template,
+                params
+        );
+    }
+    
+    /** Log a message at the FINE level */
+    public void finer(String str) {
+        this.log(
+                Level.FINER,
+                str
+        );
+    }
+    public void finer(String template, Object[] params) {
+        this.log(
+                Level.FINER,
                 template,
                 params
         );

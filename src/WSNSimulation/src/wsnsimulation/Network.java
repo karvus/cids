@@ -54,7 +54,7 @@ public class Network {
     private final List<Node> nodeList = new ArrayList<>();
     
     private final WSNLogger LOGGER = new WSNLogger("Network", this);
-    private final int MSG_DELAY = 25;
+    private final int MSG_DELAY = 5;
     
     /**
      * Adds a Node to our network
@@ -89,7 +89,7 @@ public class Network {
      */
     public void simulate() {
         ++this.time;
-        LOGGER.fine("Simulating tick "+this.time);
+        LOGGER.finer("Simulating tick "+this.time);
         LOGGER.info("Error is "+this.averageTimeError());
         
         // send off all messages that are ready to be sent
@@ -119,7 +119,7 @@ public class Network {
      * @param sender The node that sent the message
      */
     public void sendMessage(Message msg, Node recipient, Node sender) {
-        LOGGER.info(
+        LOGGER.fine(
                 "Sending message {0} ({1} -> {2})",
                 new Object[]{msg, sender, recipient}
         );

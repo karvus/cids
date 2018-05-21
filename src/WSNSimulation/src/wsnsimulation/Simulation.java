@@ -13,25 +13,46 @@ public class Simulation {
         // create our network
         Network network = new Network();
         
-        // create a ring of 3 Nodes
-        // each node can only send messages to the next node in the ring
-        Node[] nodes = new MMTSNode[3];
+        // create a 3x3 grid of nodes
+        // nodes can only send messages up/to the side
+        Node[][] nodes = new MMTSNode[5][4];
         for (int i = 0; i < nodes.length; ++i) {
-            nodes[i] = new MMTSNode(
-                    i,
-                    network,
-                    null
-            );
-            network.addNode(nodes[i]);
-            // update previous node's neighbors to be us
-            if (i > 0) {
-                nodes[i - 1].setNeighbors(new Node[]{nodes[i]});
+            for (int j = 0; j < nodes[i].length; ++j) {
+                nodes[i][j] = new MMTSNode(
+                        i*nodes.length + j,
+                        network,
+                        null
+                );
+                network.addNode(nodes[i][j]);
             }
         }
-        // close the ring
-        nodes[nodes.length - 1].setNeighbors(new Node[]{nodes[0]});
+        for (int i = 0; i < nodes.length; ++i) {
+            for (int j = 0; j < nodes[i].length; ++j) {
+                Node[] neighbors = new Node[nodes.length + nodes[i].length - 2];
+                int index = 0;
+                for (int x = 0; x < nodes.length; ++x) {
+                    if (x == i) { continue; }
+                    neighbors[index++] = nodes[x][j];
+                }
+                for (int y = 0; y < nodes[i].length; ++y) {
+                    if (y == j) { continue; }
+                    neighbors[index++] = nodes[i][y];
+                }
+                nodes[i][j].setNeighbors(neighbors);
+            }
+        }
         
-        for (int i = 0; i < 100; ++i) {
+        // create simple interconnected 2 nodes
+        /*Node[] nodes = new Node[]{
+            new MMTSNode(0, network, new Node[0]),
+            new MMTSNode(1, network, new Node[0])
+        };
+        nodes[0].setNeighbors(new Node[]{ nodes[1] });
+        nodes[1].setNeighbors(new Node[]{ nodes[0] });
+        network.addNode(nodes[0]);
+        network.addNode(nodes[1]);*/
+        
+        for (int i = 0; i < 1000; ++i) {
             network.simulate();
         }
     }
