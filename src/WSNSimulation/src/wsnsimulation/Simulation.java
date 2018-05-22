@@ -1,7 +1,9 @@
 package wsnsimulation;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import wsnsimulation.ATS.ATSNode;
-import wsnsimulation.MMTS.MMTSNode;
 
 /**
  * @authors jofag17, luols17, moell17, perat17, tsten16
@@ -12,7 +14,7 @@ public class Simulation {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         // create our network
         Network network = new Network();
         
@@ -55,8 +57,13 @@ public class Simulation {
         network.addNode(nodes[0]);
         network.addNode(nodes[1]);*/
         
+        WSNLogger.LOG_FILE = new BufferedWriter(new FileWriter("./ats-lowtuning-3.csv"));
+        WSNLogger logger = new WSNLogger("Simulation", network);
+        logger.write("ATS (100 broadcast interval, tuning parameters = 0.1)");
+        logger.write("Tick,Average error");
         for (int i = 0; i < 10000; ++i) {
             network.simulate();
+            logger.write(network.getTime()+","+network.averageTimeError());
         }
     }
     

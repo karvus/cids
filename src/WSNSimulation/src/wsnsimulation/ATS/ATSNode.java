@@ -13,9 +13,9 @@ import wsnsimulation.Node;
 public class ATSNode extends Node {
     private double lastMsgTime = this.getTime() - BROADCAST_PERIOD - 1.0; // time we last sent out messages to neighbors
     // inherits correctionSkew (alpha hat) and correctionOffset (beta hat)
-    private double tuningRelativeSkew = 0.5; // rho_n
-    private double tuningSkew = 0.5; // rho_v
-    private double tuningOffset = 0.5; // rho_o
+    private double tuningRelativeSkew = 0.1; // rho_n
+    private double tuningSkew = 0.1; // rho_v
+    private double tuningOffset = 0.1; // rho_o
     
     /** Represents data related to the pair (us,neighbor[i]) for a given i */
     private class NeighborData {

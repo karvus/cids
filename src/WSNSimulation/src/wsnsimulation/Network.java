@@ -71,7 +71,7 @@ public class Network {
      * Where error is defined as the distance between the node's logical time
      *   and the time that is the average of every node's logical time
      */
-    private double averageTimeError() {
+    public double averageTimeError() {
         double[] nodeTimes = new double[this.nodeList.size()];
         double sumNodeTimes = 0.0;
         for (int i = 0; i < this.nodeList.size(); ++i) {

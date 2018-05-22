@@ -1,13 +1,18 @@
 package wsnsimulation;
 
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A simple logger that displays information as simulation-time stamped lines
  * @authors jofag17, luols17, moell17, perat17, tsten16
  */
 public class WSNLogger {
+    public static BufferedWriter LOG_FILE;
+    
     private final String COL_PRE = "\u001B[";
     private final String name;
     private Level level = Level.INFO;
@@ -36,6 +41,15 @@ public class WSNLogger {
         return col(34)+this.network.getTime()
                 +col(0)+col(2)+col(90)+" ["+levelName+" "+this.name+"] "
                 +col(0);
+    }
+    
+    /** Writes a message to the log file */
+    public void write(String str) {
+        try {
+            LOG_FILE.write(str+"\n");
+        } catch (IOException ex) {
+            this.err("Failed to write to log: "+ex.getLocalizedMessage());
+        }
     }
     
     /** Log a message at the specified level */

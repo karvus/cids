@@ -108,7 +108,8 @@ public class MMTSNode extends Node {
                 offsetMax = (theirData.correctionSkew + theirData.mu)*theirData.time
                         + theirData.correctionOffset + theirData.nu
                         - relativeSkew * (theirData.correctionSkew + theirData.mu)*this.getHardwareTime();
-            } else if (p == 1.0) {
+            }
+            if (p == 1.0) {
                 if (DEBUG) { LOGGER.fine("Applying strict maximum consensus: "+p); }
                 double i_variant = (this.correctionSkew + this.mu)*this.getHardwareTime()
                         + this.correctionOffset + this.nu;
@@ -125,7 +126,8 @@ public class MMTSNode extends Node {
                 offsetMin = (theirData.correctionSkew - theirData.mu)*theirData.time
                         + theirData.correctionOffset - theirData.nu
                         - relativeSkew * (theirData.correctionSkew - theirData.mu)*this.getHardwareTime();
-            } else if (q == 1.0) {
+            }
+            if (q == 1.0) {
                 if (DEBUG) { LOGGER.fine("Applying strict minimum consensus: "+q); }
                 double i_variant = (this.correctionSkew - this.mu)*this.getHardwareTime()
                         + this.correctionOffset - this.nu;
