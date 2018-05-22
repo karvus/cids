@@ -67,8 +67,9 @@ public class Network {
     }
     
     /**
-     * Calculates the mean squared error of node clocks vs the average of all node clocks
-     * Is used as a measure of how well the time synchronization is doing (lower = better)
+     * Calculates the average error of each node
+     * Where error is defined as the distance between the node's logical time
+     *   and the time that is the average of every node's logical time
      */
     private double averageTimeError() {
         double[] nodeTimes = new double[this.nodeList.size()];
@@ -81,9 +82,9 @@ public class Network {
         
         double error = 0.0;
         for (double nodeTime : nodeTimes) {
-            error += Math.pow(nodeTime - averageTime, 2);
+            error += Math.abs(nodeTime - averageTime);
         }
-        return error;
+        return error / (double) nodeTimes.length;
     }
     
     /**

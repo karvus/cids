@@ -10,8 +10,9 @@ public abstract class Node {
     protected static final boolean DEBUG = Simulation.DEBUG;
     protected final WSNLogger LOGGER;
     protected final Random RAND = new Random();
+    protected final double BROADCAST_PERIOD = 100.0;
     public final double HARDW_SKEW = 1.0 + RAND.nextGaussian() * 0.0001; // 10^-4 as described in MMTS paper
-    public final double HARDW_OFFSET = RAND.nextGaussian() * 10;
+    public final double HARDW_OFFSET = RAND.nextGaussian() * 1000;
     public double correctionSkew = 1.0; // must be changed by the algo
     public double correctionOffset = 0.0; // must be changed by the algo
     protected final int id;

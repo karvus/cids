@@ -10,9 +10,7 @@ import wsnsimulation.Node;
  * A Node that uses MMTS to synchronize time
  * @authors jofag17, luols17, moell17, perat17, tsten16
  */
-public class MMTSNode extends Node {
-    private final double BROADCAST_PERIOD = 10.0;
-    
+public class MMTSNode extends Node {    
     private double lastMsgTime = this.getTime() - BROADCAST_PERIOD - 1.0; // time we last sent out messages to neighbors
     // inherits correctionSkew (alpha hat) and correctionOffset (beta hat)
     private double mu = 0.0; // used in algorithm (mu)

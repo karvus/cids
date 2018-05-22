@@ -1,5 +1,6 @@
 package wsnsimulation;
 
+import wsnsimulation.ATS.ATSNode;
 import wsnsimulation.MMTS.MMTSNode;
 
 /**
@@ -17,10 +18,10 @@ public class Simulation {
         
         // create a 3x3 grid of nodes
         // nodes can only send messages up/to the side
-        Node[][] nodes = new MMTSNode[5][5];
+        Node[][] nodes = new Node[5][5];
         for (int i = 0; i < nodes.length; ++i) {
             for (int j = 0; j < nodes[i].length; ++j) {
-                nodes[i][j] = new MMTSNode(
+                nodes[i][j] = new ATSNode(
                         i*nodes.length + j,
                         network,
                         null
@@ -54,7 +55,7 @@ public class Simulation {
         network.addNode(nodes[0]);
         network.addNode(nodes[1]);*/
         
-        for (int i = 0; i < 1000; ++i) {
+        for (int i = 0; i < 10000; ++i) {
             network.simulate();
         }
     }
