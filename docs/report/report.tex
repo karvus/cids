@@ -1,10 +1,12 @@
 \documentclass[a4paper,12pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage[sorting=nyt,citestyle=authoryear]{biblatex}
-\addbibresource{report.bib}
+\usepackage[round]{natbib}
+\bibliographystyle{humannat}
+%\usepackage[sorting=nyt,citestyle=authoryear]{biblatex}
+%\addbibresource{report.bib}
 \usepackage[normalem]{ulem}
-\usepackage{hyperref}
+\usepackage[hidelinks]{hyperref}
 \usepackage{libertine}
 \usepackage[scaled=0.89]{inconsolata}
 \usepackage[showframe=false,bottom=6em,head=8em]{geometry}
@@ -18,7 +20,11 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.15}
 \usepackage{amsmath}
+\usepackage{xfrac}
 \usepackage{mathtools}
+
+\pgfplotsset{compat=newest} % Allows to place the legend below plot
+\usepgfplotslibrary{units} % Allows to enter the units nicely
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -35,16 +41,12 @@
 \date{\today}
 \title{FF501 Consensus in Distributed Systems}
 \author{
-  Johan Ringmann Fagerberg \\
-  Marcus Møller \\
-  Lucas Olai Jarlkov Olsen \\
-  Peter Heilbo Ratgen \\
-  Thomas Stenhaug
+  Johan Ringmann Fagerberg - TILFØJ STUDIE EMAIL\\
+  Marcus Møller - moell17@student.sdu.dk \\
+  Lucas Olai Jarlkov Olsen - TILFØJ STUDIE EMAIL\\
+  Peter Heilbo Ratgen - perat17@student.sdu.dk\\
+  Thomas Stenhaug - TILFØJ STUDIE EMAIL
 }
-
-\newenvironment{rcases}
-  {\left.\begin{aligned}}
-  {\end{aligned}\right\rbrace}
 
 \pagenumbering{roman}
 
@@ -78,11 +80,11 @@ A definition of \textit{distributed system} is
 \begin{quote}
   A distributed system is a collection of autonomous computing
   elements that appears to its users as a single, coherent
-  system.\cite{TanenbaumSteen06}
+  system.\citet{TanenbaumSteen06}
 \end{quote}
 
 The computing elements are typically called
-nodes \cite{TanenbaumSteen06}, which is the term we will use within.
+nodes \citet{TanenbaumSteen06}, which is the term we will use within.
 Nodes can be both hardware units, of software processes, while
 \textit{users} might refer both to humans and software processes.
 
@@ -112,7 +114,7 @@ reached by other means, and it must be reached in the face of faulty
 or malicious nodes.
 
 An example of faults, \textit{Byzantine faults}, were described in
-Lamport, Shostak and Pease in a 1982 paper \cite{Lamport82}.  A group
+Lamport, Shostak and Pease in a 1982 paper \citet{Lamport82}.  A group
 of Byzantine generals, each general commanding a division, is
 besieging a city.  They must reach an agreement on whether to all
 attack or all retreat, and they can only communicate through messages.
@@ -128,7 +130,7 @@ particular, it is too expensive to have an atomic clock at every node.
 Depending on the application of the distributed system, different
 ``levels'' of synchronization might be chosen.  
 
-Logical clocks \cite{Lamport78}, are chosen when it's only the strong
+Logical clocks \citet{Lamport78}, are chosen when it's only the strong
 ordering of events within the system that is necessary.  If $c(x)$ is
 a function of the system's ``clock'' at the point when event $x$.  Using
 $a \rightarrow b$ to mean $a$ precedes $b$, then the strong clock condition is that
@@ -150,9 +152,6 @@ The most intuitive is the propagation of a "true" time throughout a network, as 
 
 An alternative problem is reaching consensus on a shared time in a network, regardless of what said time is. This is useful for ensuring sequentiality of events within the network, and can be made highly resistant to failed or malicious nodes in the network, as no nodes have a greater weight than others when it comes to reaching consensus on a value. As such this problem is highly applicable to scenarios where the reliability of the consensus is important, and where the impact of nodes joining or leaving the network must be limited. It is primarily this problem we will be discussing in this paper.
 
-\subsection{Maximum Minimum Time Synchronization (MMTS)}
-
-
 \subsubsection{Clock modelling}
 %Clock drift
 
@@ -161,6 +160,7 @@ The hardware clock available to each node is often a low precision clock, whose 
 For the sake of modelling such a clock the concept of a virtual absolute time $t$ is introduced. This time is not known to any nodes, but is a useful tool, as it allows us to express the output of a given clock as a function of the current absolute time.
 
 As such the local hardware clock $\tau$ of a node $i$ can be modelled as a linear function with two parameters, the skew $\alpha$ and the offset $\beta$:
+
 
 \begin{equation}\label{eq:hardware-clock}
     \tau_i(t) = \alpha_i t + \beta_i.
@@ -183,34 +183,32 @@ Expanding this to the entire network, reaching consensus can be formalized as re
 
 %Time sync in 
 
-\subsection{Strategies for time synchronization (WIP(Peter))}
+\section{Strategies for time synchronization}
 
 %Describe the advantages and disadvantages of the different kinds of time synchronization strategies (non-consensus vs. consensus)
-By in-large there are two ways of approaching the time synchronization problem, these being consensus and non-consensus based algorithms.
 
-    \subsubsection{Non-consensus}
+By and large there are two ways of approaching the time synchronization problem, these being consensus and non-consensus based algorithms.
+
+    \subsection{Non-consensus}
     %In general about non-consensus
-    Examples of non-consensus time synchronization algorithms are The Berkeley algorithm, Reference Broadcast Synchronization (RBS) and The Flooding Time Sync Protocol (FTSP). All of these algorithms incorporate some form of master-slave relationship. Regarding RBS and FTSP, these are tailored to Wireless Sensor Networks (WSN).
+    The non-consensus synchronization strategy is what we previously described as utilizing a very precise clock as a authoritative reference. The other clocks of the network change their clocks to match this "leader" clock.
+    Examples of non-consensus time synchronization algorithms are The Berkeley algorithm, Reference Broadcast Synchronization (RBS), Timing-sync Protocol for Sensor Netorks (TPSN) and The Flooding Time Sync Protocol (FTSP). All of these algorithms incorporate some form of master-slave relationship. Regarding RBS, TPSN and FTSP, these are tailored to Wireless Sensor Networks (WSN).
     
     %Not sure if it should be included
-    \paragraph{The Berkeley algorithm} The simplest algorithms is the Berkeley algorithm (\cite{Gusella89}), it works by having a centralized time server polling the nodes for their current clock value. The time server then averages these clock values, along with its own clock value. The time server then tells each node to adjust to the averaged clock value. 
-    
-    %\paragraph{NTP}
-    
-    \paragraph{RBS} The Reference Broadcast algorithm, described by \cite{ElsonGirodEstrin02},  functions by a central node sending out a reference packet to each node. Each node then records the time at which the reference packet was received. %Exhanging of recorded clock times? 
+    \paragraph{The Berkeley algorithm} The simplest algorithms is the Berkeley algorithm, as describes by \citet{Gusella89}, the algorithm works by having a centralized time server polling the nodes for their current clock value. The time server then averages these clock values, along with its own clock value. The time server then instructs each node to adjust to the averaged clock value. 
+
+    \paragraph{RBS} The Reference Broadcast Synchronization algorithm, described by \citet{ElsonGirodEstrin02},  functions by a central node sending out a reference packet to each node. Each node then records the time at which the reference packet was received. %Exhanging of recorded clock times? 
     The nodes should then compare their results. This is done by calculating their offset relative to another receiver. The offset is calculated by 
     \begin{equation}
         \label{offsetcalc}
         \textit{Offset} [i,j] = \frac{1}{M}\sum^M_{k=1} (T_{j,k} - T_{i,k})
     \end{equation}
-    where $i$ and $j$ are two nodes and $T_{p,a}$ is $p$'s clock when it received broadcast $a$. $M$ is the number of reference broadcasts.  %Handling of clock skew.
-    However calculating the offset of a node's clock relative to another, and vice versa is not enough as it doesn't take clock drift into account. However this can be solved by using linear regression to get the offset as a function.
+    where $i$ and $j$ are two nodes and $T_{j,k}$ is $j$'s clock when it received broadcast $k$. $M$ is the number of reference broadcasts.  %Handling of clock skew. Using post-factosynchronization
+    However calculating the offset of a node's clock relative to another, and vice versa is not enough, as it doesn't take clock drift into account. The offset can then be calculated a function by utilzing linear regression. 
     $$\textit{Offset}[i,j](t) = \alpha t + \beta$$
-    This allows for a more accurate estimation of a nodes current clock value by another node.
+    The node then stores this information about the node's relative drift between its clock and any other node in the network (of which is it maintains a relative clock). This approach is called post-facto synchronization.
     
-    %Post-facto synchronization
-    
-    \paragraph{TPSN} The Timing-sync Protocol for Sensor Networks protocol, described by \cite{GaneriwalEtAl03}, functions by selecting a node as the root node. At first the algorithm enters the "level discovery phase", in this  phase each node is assigned a level. This is done the root node sending out a \texttt{level\_discovery} packet. Then each node assigns itself to a level lower than from which at received the packet. This node then broadcasts a \texttt{level\_discovery}. The algorithms then enters the synchronization phase, it uses sender-receiver synchronization. This sets it apart from RBS, which uses receiver-receiver synchronization. This mean that the receiver synchronizes to the sender. The time is synchronized by calculating the clock drift and the propagation time between nodes. As seen on figure \ref{timemeasuretpsn}, the receiver node A sends a synchronization pulse to the sender B, which is located at a greater level. Node A sends a synchronization pulse to B, which in turn sends back an acknowledgement packet. This acknowledgement packet contains the values of $T_1$, $T_2$ and $T_3$. Then the final time $T_4$ is recorded by node A. From these values the clock drift ($\Delta$) and propagation delay ($d$) between the two nodes can be calculated. 
+    \paragraph{TPSN} The Timing-sync Protocol for Sensor Networks protocol, described by \citet{GaneriwalEtAl03}, functions by selecting a node as the root node. At first the algorithm enters the "level discovery phase", in this  phase each node is assigned a level. This is done the root node sending out a \texttt{level\_discovery} packet. Then each node assigns itself to a level lower than from which at received the packet. This node then broadcasts a \texttt{level\_discovery}. The algorithms then enters the synchronization phase, it uses sender-receiver synchronization. This sets it apart from RBS, which uses receiver-receiver synchronization. This mean that the receiver synchronizes to the sender. The time is synchronized by calculating the clock drift and the propagation time between nodes. As seen on figure \ref{timemeasuretpsn}, the receiver node A sends a synchronization pulse to the sender B, which is located at a greater level. Node A sends a synchronization pulse to B, which in turn sends back an acknowledgement packet. This acknowledgement packet contains the values of $T_1$, $T_2$ and $T_3$. Then the final time $T_4$ is recorded by node A. From these values the clock drift ($\Delta$) and propagation delay ($d$) between the two nodes can be calculated. 
     
     $$\Delta = \frac{(T_2-T_1) - (T_4 - T_3)}{2} \quad ; \quad d = \frac{(T_2-T_1) + (T_4-T_3)}{2}$$
     
@@ -240,42 +238,85 @@ By in-large there are two ways of approaching the time synchronization problem, 
     
     
     \paragraph{FTSP} %allegedly one of the best non-consensus algorithms
-    The Flooding Time Sync Protocol, described by \cite{Maroti04}
+    The Flooding Time Sync Protocol, is described by \citet{Maroti04}. The objective of the Flooding Time Sync Protocol is to achieve synchronization of the clocks of the participating nodes. As opposed to TPSN, FTSP keeps an ad-hoc structure of the nodes. 
     
+    \begin{figure}[H]
+        \centering
+        \begin{tikzpicture}
+        
+        \filldraw[fill=white, draw=black] (0,-1) circle (0.2cm) node(1){};
+        \filldraw[fill=white, draw=black] (3.0,-2.9) circle (0.2cm) node(2){};
+        \filldraw[fill=white, draw=black] (3.3,-2) circle (0.2cm) node(3){};
+        \filldraw[fill=white, draw=black] (2.5,-2) circle (0.2cm) node(4){};
+        \filldraw[fill=white, draw=black] (2.3,-1.4) circle (0.2cm) node(5){};
+        \filldraw[fill=white, draw=black] (1,-1) circle (0.2cm) node(6){};
+        \filldraw[fill=white, draw=black] (0.5,-2.2) circle (0.2cm) node(7){};
+        \filldraw[fill=white, draw=black] (1,-3) circle (0.2cm) node(8){};
+        \filldraw[fill=white, draw=black] (1.8,-4) circle (0.2cm) node(9){};
+        \filldraw[fill=white, draw=black] (2.3,-3.2) circle (0.2cm) node(10){};
+        \filldraw[fill=white, draw=black] (1.1,-2) circle (0.2cm) node(11){};
+        \filldraw[fill=white, draw=black] (0.2,-2.8) circle (0.2cm) node(12){};
+        \filldraw[fill=white, draw=black] (0.9,-3.8) circle (0.2cm) node(13){};
+        \fill [black](1.75,-2.6) circle (0.25cm) node(main){};
+        
+        \draw (1) -- (main);
+        \draw (2) -- (main);
+        \draw (3) -- (main);
+        \draw (4) -- (main);
+        \draw (5) -- (main);
+        \draw (6) -- (main);
+        \draw (7) -- (main);
+        \draw (8) -- (main);
+        \draw (9) -- (main);
+        \draw (10) -- (main);
+        \draw (11) -- (main);
+        \draw (12) -- (main);
+        \draw (13) -- (main);
+        
+        \end{tikzpicture}
+        \caption{Illustration of an ad-hoc network structure, with 14 nodes of which one is the leader.}
+    \end{figure}
+    %Time-stamping
+    The FTSP uses a radio broadcast, which contains the transmitter's time stamp. Upon receiving the broadcast the local time is recorded. The receiver then calculates its bit offset, so it can interpret the data from the transmitter correctly. The data is then followed by some check bytes called CRC bytes. FTSP has a different way of time stamping than TPSN(which time stamps at MAC layer). The FTSP time stamps seeks to reduce irregularities in the handling of interrupts and encoding and decoding. Irregularities occur in the handling of interrupts, when interrupts are disabled for a short period of time on the receiving microcontroller. The irregularities is reduced by taking the minimum of the time stamps. This approach results in a time stamping accuracy of $1.4 \mu \text{s}$ between transmitters and receivers.
     
+    %Management of clock drift
     
-    \subsubsection{Consensus}
+    As we know the oscillation of a quartz crystal can be irregular. And clocks will drift apart relative to each other after some time. To maintain the previously mentioned accuracy of a few microseconds, continuous and frequent synchronization would be required. Instead of having a high synchronization frequency, which would congest the network. The approach of estimating the offset of the local clock relative to the global time, was chosen. This is done by applying linear regression to the offset, between the clock of the local node and the clock of the transmitter, relative to time passed. Thus the offset can be estimated. In an experiment conducted in the paper, with a time synchronization interval of 30 seconds and a query interval of 18 seconds, the average error was $1.48 \mu \text{s}$.
+    
+    %Multihop synchronization
+    
+    \subsection{Consensus}
     %Description of Consensus as a concept here.
+    Consensus based synchronization strategies do not utilize a reference node to correctly synchronize nodes \cite{HeLiChenCheng13}. Instead these protocols are completely distributed and can be utilized in more dynamic network topologies without a common root.
     
     To analyze the consensus-based algorithms, Average Time Synchronization (ATS) and Modified Maximum Time Synchronization (MMTS), we researched their creation and how they function. The following sections describe these algorithms to provide a basis of knowledge before their comparison.
     
-    %REMEMBER CITATIONS IN THIS SECTION.
-    \paragraph{ATS} The Average Time Synchronization, as described by CITE HERE, uses three important operations to achieve it's synchronization between nodes in the network: Relative drift estimation, drift compensation and offset compensation. The algorithm utilizes a pseudo-periodic broadcast as it's communication protocol between nodes. The nodes each transmits a set of information to all of it's neighbors with a period $\mathrm{T}$. The instants in which the nodes transmit is defined as 
+    \paragraph{ATS} The Average Time Synchronization, as described by \citet{SchenatoFiorentin11}, uses three important operations to achieve it's synchronization between nodes in the network: Relative drift estimation, drift compensation and offset compensation. The algorithm utilizes a pseudo-periodic broadcast as it's communication protocol between nodes. The nodes each transmits a set of information to all of it's neighbors with a period $\mathrm{T}$. The instants in which the nodes transmit is defined as 
     
     \begin{equation}
         t^i_\ell = \frac{\ell\mathrm{T} - \beta_i}{\alpha_i} = \ell\mathrm{T}_i + \bar{\beta_i},
     \end{equation}
-    or $\tau_j(t^i_\ell) = \ell\mathrm{T}$, where i is the node and $\ell \in \mathbb{N}$ is the message number. Each node transmits it's message at every period $\mathrm{T}$ based on its own clock which it doesn't share with it's neighbors. Meaning the transmission instants are different for each node due to the different $\alpha_i$ in the nodes. The broadcast is therefore pseudo-periodic.
+    or $\tau_j(t^i_\ell) = \ell\mathrm{T}$, where i is the node and $\ell \in N$ is the message number. Each node transmits it's message at every period $\mathrm{T}$ based on its own clock which it doesn't share with it's neighbors. Meaning the transmission instants are different for each node due to the different $\alpha_i$ in the nodes. The broadcast is therefore pseudo-periodic.
     
     
-    The relative drift estimation estimates the difference in clock rate, or relative drift, between each node's clock i compared to their neighbor j. Clock drift  Every node i estimates the drift between it and all of it's neighbors. Part of the aforementioned set of information sent in messages between nodes, is the current local time of the sender, node j, denoted by $\tau_j(t^j_\ell)$. When node i receives the message it records it's own local time by $\tau_i(t^j_\ell)$. Node i stores the two clock readings as $(\tau\^{old}_i_j, \tau\^{old}_j) = (\tau_i(t^j_\ell), \tau_j(t^j_\ell))$. When i later receives another message from j, the process repeats and a new clock reading pair is constructed, $(\tau_i(t^j_\ell_+_1), \tau_j(t^j_\ell_+_1))$. Finally the estimate of $\alpha_i_j = \frac{\alpha_j}{\alpha_i}$ is found by a low-pass filter as described below.
+    The relative drift estimation estimates the difference in clock rate, or relative drift, between each node's clock i compared to their neighbor j. Clock drift  Every node i estimates the drift between it and all of it's neighbors. Part of the aforementioned set of information sent in messages between nodes, is the current local time of the sender, node j, denoted by $\tau_j(t^j_\ell)$. When node i receives the message it records it's own local time by $\tau_i(t^j_\ell)$. Node i stores the two clock readings as $(\tau\^{old}_{i_j}, \tau\^{old}_j) = (\tau_i(t^j_\ell), \tau_j(t^j_\ell))$. When i later receives another message from j, the process repeats and a new clock reading pair is constructed, $(\tau_i(t^j_{\ell + 1}), \tau_j(t^j_{\ell + 1}))$. Finally the estimate of $\alpha_{ij} = \frac{\alpha_j}{\alpha_i}$ is found by a low-pass filter as described below.
     
-    \begin{equation} \nonumber
+    \begin{equation}
         \begin{rcases*}
-         (\tau_i_j^n^e^w, \tau_j^n^e^w) &= (\tau_i(t^j_\ell), \tau_j(t^j_\ell)) \\
-         \eta_i_j(t^+) &= \rho_\eta\eta_i_j(t) + (1 - \rho_\eta)\frac{\tau_j^n^e^w - \tau_j^o^l^d}{\tau_i_j^n^e^w - \tau_i_j^o^l^d} \\
-        (\tau_i_j^o^l^d, \tau_j^o^l^d) &= (\tau_i_j^n^e^w, \tau_j^n^e^w)
-        \end{rcases*}
+            (\tau_{ij}^{new}, \tau_j^{new}) &= (\tau_i(t^j_\ell), \tau_j(t^j_\ell)) \\
+            \eta_{ij}(t^+) &= \rho_\eta\eta_{ij}(t) + (1 - \rho_\eta)\frac{\tau_j^{new} - \tau_j^{old}}{\tau_{ij}^{new} - \tau_{ij}^{old}} \\
+            (\tau_{ij}^{old}, \tau_j^{old}) &= (\tau_{ij}^{new}, \tau_j^{new})
+        \end{rcases*} \nonumber
     \end{equation}
     \begin{equation}
-    t = t^j_\ell
+        t = t^j_\ell
     \end{equation}
     
     \begin{equation}
-        \eta_i_j(t) = \eta_i_j(t^+),\ t \in (t^+, t_\ell_+_1^j]
+        \eta_{ij}(t) = \eta_{ij}(t^+),\ t \in (t^+, t_{\ell + 1}^j]
     \end{equation}
     
-    Where $\rho_\eta \in (0, 1)$ is a tuning parameter, and $t^+$ is the clock update. $\eta_i_j$ converges towards $\alph_i_j$ thereby making (5) and (6) a valid way to estimate the skew difference between two nodes and allowing us to align them.
+    Where $\rho_\eta \in (0, 1)$ is a tuning parameter, and $t^+$ is the clock update. $\eta_{ij}$ converges towards $\alph_{ij}$ thereby making (5) and (6) a valid way to estimate the skew difference between two nodes and allowing us to align them.
     
     Drift compensation is what follows the estimation. Each node stores its own estimate of the global clock rate and uses this estimate in the compensation to reach a common clock rate $\bar{\alpha}$. The algorithm then messages it's neighbors and uses the received information, to average it's estimate with the estimate of its neighbors. When a message is sent from node i to node j at time $t^j_\ell$ it changes it's own estimate value $\hat{\alpha}$ by doing
     
@@ -293,28 +334,108 @@ By in-large there are two ways of approaching the time synchronization problem, 
     \end{equation}
     
     Each node computes the estimated clock difference $\hat\tau_j(t) - \hat\tau_i(t)$ and attempts to adjust it's own clock offset to minimize this difference. The offset compensation is not required to wait for the drift compensation to finish synchronizing all the clock speeds. Instead it is applied simultaneously, yielding a better performance and quicker convergence.  
+    
+    \paragraph{MMTS} The Maximum Minimum Time Synchronization algorithm aims to make all clocks in the distributed system converge to a unified clock. The time of said unified clock may not be the actual time, but reaching a consensus is often more crucial than staying close to the actual time.
+    The method to converge that MMTS uses is that each node in the network will, at a certain interval, broadcast it's time to the neighbours. Upon receival of such a message, the node will compute a skew that is relative to the previous message received from that sender:
+    \begin{equation}
+        \alpha_i_j(k) = \frac{\frac{\tau_j(t_k) - \tau_j(t_k - 1)}{\tau_i(t_k)-\tau_i(t_k-1)} + (k-1)\alpha_i_j(k-1)}{k}
+    \end{equation}
+
+    Where \textit{i} is the computing node, \textit{j} is the node that sent the message, \textit{$\tau$} is the hardware time at the time of a message, and \textit{k} is the amount of messages received from that node.
+    
+    Then, the maximum skew and the maximum offset as well as the minimum counterparts are computed.
+    
+    \begin{equation}
+        \hat{\alpha}_i_m_a_x = \hat{\alpha}_i + \mu_i
+    \end{equation}
+    
+    \begin{equation}
+        \hat{\beta}_i_m_a_x = \hat{\beta}_i + \nu_i
+    \end{equation}
+    
+    \begin{equation}
+        \hat{\alpha}_i_m_i_n = \hat{\alpha}_i - \mu_i
+    \end{equation}
+    
+    \begin{equation}
+        \hat{\beta}_i_m_i_n = \hat{\beta}_i - \nu_i
+    \end{equation}
+    
+    Using these, $p_i_j(k)$ and $q_i_j(k)$ are computed, which in turn determines whether to use maximum or minimum consensus for the computation of the given message.
+    
+    \begin{equation}
+        p_i_j(k) = \frac{a_i_j(k)(\hat{\alpha}_j + \mu_j)}{\hat{\alpha}_i_m_a_x}
+    \end{equation}
+    
+    \begin{equation}
+        q_i_j(k) = \frac{\alpha_i_j(k) (k) (\hat{\alpha}_j - \mu_j)}{\hat{\alpha}_i_m_a_x}
+    \end{equation}
+    
+    The first one, $p_i_j$, determines whether or not to use maximum consensus
+    
+    
 %Describe algorithms Average TimeSync and Modified Maximum Time Sync.
 
-\section{Analysis}%Or comparison
-
-%Explain our implementation here and put the measurements and benchmarks in the results.
+\section{Analysis}
 %Analyze the consensus-based algorithms Average TimeSync and Modified Maximum Time Sync. 
 %Compare the algorithms, their advantages and disadvantages, and their areas of application (through both %implementation and theoretical analysis).
 
+In this section we analyze different strategies of clock synchronization. We discuss consensus-based strategies versus non-consensus strategies, describing their advantages and disadvantages. We also analyze ATS and MMTS and analyze their advantages and disadvantages in different areas of application.
+
+\subsection{Non-consensus vs. Consensus}
+
+
 \subsection{Average Time Synchronization Protocol}
+According to \citet{SchenatoFiorentin11}, one of the weaknesses of ATS is it's inaccuracy when utilizing it on larger networks. The further the "hop distance", that is the path from one node to another through it's neighbors, the greater the error of synchronization. However the error between adjacent nodes is said to only be weakly affected by the size of the network. ATS' performance is said to worsen for long synchronization periods. Compared to FTSP, ATS is shown to have a slightly better performance. It also exhibits a consistent lowering of synchronization error while FTSP often has sudden irregular spikes in error.
+
+
+In \citet{HeChengShiChen13}, a paper suggesting a more secure version of ATS, ATS' is demonstrated to have significant weaknesses when errors are caused deliberately. It describes how planted attack nodes can thoroughly worsen it's performance and even prevent synchronization completely. An attack node would be able to freely alter it's own hardware clock and send false messages to it's neighbors, thereby hindering the synchronization process. An attack node essentially has complete control over it's neighbors. When it receives a message with it's neighbors skew it can use this reading and it's own ability to freely alter it's hardware clock to control what it's neighbors computes as it's estimated average.
+
+
 
 \section{Results}
 
-\section{Discussion}
+In an effort to empirically compare ATS and MMTS we implemented a virtual network capable of simulating a communication delay $\lambda$ between nodes. We implemented ATS and MMTS in this virtual network, and simulated ten seconds of algorithm execution while gathering data on algorithm performance.
 
-\section{Process analysis}%Not supposed to be in the report. Needs to be a separate document.
+For this purpose we introduce the concept of an average synchronization error $\overline{E}(t)$ of a set of nodes $\boldsymbol{N}$, defined as the average distance from each node's logical clock to the average of every logical clock $\overline{L}(t)$ $$\overline{E}(t) = \frac{1}{|\boldsymbol{N}|} \cdot \sum_{i \in \boldsymbol{N}} \left| L_i(t) - \overline{L}(t) \right|$$
+
+This value is calculated every 100 milliseconds of algorithm execution. The resulting data set is averaged with five other data sets of the same algorithm with the same parameters to gain a fair representation of algorithm performance.
+
+For the data presented below, the tuning parameters of ATS were set to $\rho_\eta = \rho_v = \rho_o = 1 / 2$.
+
+\subsubsection{Performance at varying communication delays}
+By varying the communication delay $\lambda$ of our simulation, while keeping the broadcasting interval $T$ constant, we were able to compare algorithm performance at various levels of latency.
+
+\begin{figure}[h!]
+  \begin{center}
+    \begin{tikzpicture}
+      \begin{axis}[
+          width=\linewidth, % Scale the plot to \linewidth
+          grid=major, % Display a grid
+          grid style={dashed,gray!30}, % Set the style
+          xlabel=Time $t$, % Set the labels
+          ylabel=Average error $\overline{E}(t)$,
+          x unit=\si{ms}, % Set the respective units
+          y unit=\si{ms},
+          legend style={at={(0.5,-0.2)},anchor=north}, % Put the legend below the plot
+        ]
+        \addplot 
+        % add a plot from table; you select the columns by using the actual name in
+        % the .csv file (on top)
+        table[x=column 1,y=column 2,col sep=comma] {table.csv}; 
+        \legend{Plot}
+      \end{axis}
+    \end{tikzpicture}
+    \caption{My first autogenerated plot.}
+  \end{center}
+\end{figure}
+
+
+\section{Discussion}
 
 \section{Conclusion}
 
-
-
 %\nocite{*} % print all bibliography, remove when actual citations are in place
-\printbibliography
-
+\bibliography{report}
 
 \end{document}
