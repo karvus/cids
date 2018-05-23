@@ -18,6 +18,7 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.15}
 \usepackage{amsmath}
+\usepackage{mathtools}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -40,6 +41,10 @@
   Peter Heilbo Ratgen \\
   Thomas Stenhaug
 }
+
+\newenvironment{rcases}
+  {\left.\begin{aligned}}
+  {\end{aligned}\right\rbrace}
 
 \pagenumbering{roman}
 
@@ -145,6 +150,8 @@ The most intuitive is the propagation of a "true" time throughout a network, as 
 
 An alternative problem is reaching consensus on a shared time in a network, regardless of what said time is. This is useful for ensuring sequentiality of events within the network, and can be made highly resistant to failed or malicious nodes in the network, as no nodes have a greater weight than others when it comes to reaching consensus on a value. As such this problem is highly applicable to scenarios where the reliability of the consensus is important, and where the impact of nodes joining or leaving the network must be limited. It is primarily this problem we will be discussing in this paper.
 
+\subsection{Maximum Minimum Time Synchronization (MMTS)}
+
 
 \subsubsection{Clock modelling}
 %Clock drift
@@ -231,34 +238,72 @@ By in-large there are two ways of approaching the time synchronization problem, 
     
     In general the synchronization is initiated by the root node. By instructing level 1 nodes to synchronize to the root node. When the level 1 nodes are synchronized, the level 2 nodes are synchronized and so forth. 
     
-    %Level discovery and hierarchical structure
-    %
     
     \paragraph{FTSP} %allegedly one of the best non-consensus algorithms
-    
     The Flooding Time Sync Protocol, described by \cite{Maroti04}
     
+    
+    
     \subsubsection{Consensus}
-    %In general about consensus based algorihms
+    %Description of Consensus as a concept here.
+    
+    To analyze the consensus-based algorithms, Average Time Synchronization (ATS) and Modified Maximum Time Synchronization (MMTS), we researched their creation and how they function. The following sections describe these algorithms to provide a basis of knowledge before their comparison.
+    
+    %REMEMBER CITATIONS IN THIS SECTION.
+    \paragraph{ATS} The Average Time Synchronization, as described by CITE HERE, uses three important operations to achieve it's synchronization between nodes in the network: Relative drift estimation, drift compensation and offset compensation. The algorithm utilizes a pseudo-periodic broadcast as it's communication protocol between nodes. The nodes each transmits a set of information to all of it's neighbors with a period $\mathrm{T}$. The instants in which the nodes transmit is defined as 
+    
+    \begin{equation}
+        t^i_\ell = \frac{\ell\mathrm{T} - \beta_i}{\alpha_i} = \ell\mathrm{T}_i + \bar{\beta_i},
+    \end{equation}
+    or $\tau_j(t^i_\ell) = \ell\mathrm{T}$, where i is the node and $\ell \in \mathbb{N}$ is the message number. Each node transmits it's message at every period $\mathrm{T}$ based on its own clock which it doesn't share with it's neighbors. Meaning the transmission instants are different for each node due to the different $\alpha_i$ in the nodes. The broadcast is therefore pseudo-periodic.
     
     
-
+    The relative drift estimation estimates the difference in clock rate, or relative drift, between each node's clock i compared to their neighbor j. Clock drift  Every node i estimates the drift between it and all of it's neighbors. Part of the aforementioned set of information sent in messages between nodes, is the current local time of the sender, node j, denoted by $\tau_j(t^j_\ell)$. When node i receives the message it records it's own local time by $\tau_i(t^j_\ell)$. Node i stores the two clock readings as $(\tau\^{old}_i_j, \tau\^{old}_j) = (\tau_i(t^j_\ell), \tau_j(t^j_\ell))$. When i later receives another message from j, the process repeats and a new clock reading pair is constructed, $(\tau_i(t^j_\ell_+_1), \tau_j(t^j_\ell_+_1))$. Finally the estimate of $\alpha_i_j = \frac{\alpha_j}{\alpha_i}$ is found by a low-pass filter as described below.
+    
+    \begin{equation} \nonumber
+        \begin{rcases*}
+         (\tau_i_j^n^e^w, \tau_j^n^e^w) &= (\tau_i(t^j_\ell), \tau_j(t^j_\ell)) \\
+         \eta_i_j(t^+) &= \rho_\eta\eta_i_j(t) + (1 - \rho_\eta)\frac{\tau_j^n^e^w - \tau_j^o^l^d}{\tau_i_j^n^e^w - \tau_i_j^o^l^d} \\
+        (\tau_i_j^o^l^d, \tau_j^o^l^d) &= (\tau_i_j^n^e^w, \tau_j^n^e^w)
+        \end{rcases*}
+    \end{equation}
+    \begin{equation}
+    t = t^j_\ell
+    \end{equation}
+    
+    \begin{equation}
+        \eta_i_j(t) = \eta_i_j(t^+),\ t \in (t^+, t_\ell_+_1^j]
+    \end{equation}
+    
+    Where $\rho_\eta \in (0, 1)$ is a tuning parameter, and $t^+$ is the clock update. $\eta_i_j$ converges towards $\alph_i_j$ thereby making (5) and (6) a valid way to estimate the skew difference between two nodes and allowing us to align them.
+    
+    Drift compensation is what follows the estimation. Each node stores its own estimate of the global clock rate and uses this estimate in the compensation to reach a common clock rate $\bar{\alpha}$. The algorithm then messages it's neighbors and uses the received information, to average it's estimate with the estimate of its neighbors. When a message is sent from node i to node j at time $t^j_\ell$ it changes it's own estimate value $\hat{\alpha}$ by doing
+    
+    \begin{equation}
+        \hat{\alpha_i}(t^+) = \rho_v\hat\alpha_i(t) + (1 - \rho_v)\eta_i_j(t)\hat\alpha_j(t), \ t = t^j_\ell, \ i \in \mathcal{N}_j.
+    \end{equation}
+    
+    $\alpha_j$ is the global clock drift estimation of node j. When each node periodically averages its drift estimate with it's neighbors, it follows that all estimates $\hat\tau_i(t)$ will ultimately have the same speed.
+    
+    
+    Offset Compensation is the final major operation of ATS. After each node has reached consensus on their drift estimation all that is left to reach complete synchronization, is to fix the offset between the clocks. An algorithm to fix any such remaining offsets is applied. The subsequent equation describes this adjustment.
+    
+    \begin{equation}
+        \hat{o}_i(t^+) = \hat{o}_i(t) + (1 - \rho_o)(\hat{\tau}_j(t) - \hat{\tau}_i(t)), \ t=t^j_\ell, \i \in \mathcal{N}_j.
+    \end{equation}
+    
+    Each node computes the estimated clock difference $\hat\tau_j(t) - \hat\tau_i(t)$ and attempts to adjust it's own clock offset to minimize this difference. The offset compensation is not required to wait for the drift compensation to finish synchronizing all the clock speeds. Instead it is applied simultaneously, yielding a better performance and quicker convergence.  
 %Describe algorithms Average TimeSync and Modified Maximum Time Sync.
 
 \section{Analysis}%Or comparison
-To analyze each of the two aforementioned Synchronization protocols we first researched their creation and how each of them function. What follows in this section is a short description of each of the protocols, Average Time Synchronization (ATS) and Modified Maximum Time Synchronization (MMTS). We'll describe how they function and discuss their advantages and disadvantages in certain situations and areas of application as well as their performance in an implemented simulated Wireless Sensor Network. Their performance will be compared on their synchronization accuracy and speed in the simulation.
 
-%Perhaps have the description of the consensus algorithms in the previous section.
-
+%Explain our implementation here and put the measurements and benchmarks in the results.
 %Analyze the consensus-based algorithms Average TimeSync and Modified Maximum Time Sync. 
 %Compare the algorithms, their advantages and disadvantages, and their areas of application (through both %implementation and theoretical analysis).
 
 \subsection{Average Time Synchronization Protocol}
 
-
-
 \section{Results}
-
 
 \section{Discussion}
 
