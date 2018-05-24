@@ -400,14 +400,11 @@ In this section we analyze different strategies of clock synchronization. We dis
 
 \paragraph{Scalability}
 
-WSN can be of significant scale (150+ nodes). For an algorithm to be applicable in such a large network it needs to be shown to do so. TPSN has been shown to work in a large scale network of 150 to 300 nodes. As specified by \cite{GaneriwalEtAl03}, the performance is due to networks hierarchical structure, as it is possible to find a shortest path to each node. And by using multihop it's possible to communicate to each node, however this introduces synchronization errors and the larger the hop, the larger the error. 
+WSN can be of significant scale (150+ nodes). For an algorithm to be applicable in such a large network it needs to be shown to do so. TPSN has been shown to work in a large scale network of 150 to 300 nodes. As specified by \cite{GaneriwalEtAl03}, the performance is due to networks hierarchical structure, as it is possible to find a shortest path to each node. And by using multihop it's possible to communicate to each node, however this introduces synchronization errors and the larger the hop, the larger the error. Regarding MMTS it has been shown by \citet{HeLiChenCheng13} that MTS requires more broadcasts to converge as the number of nodes increase. The number of broadcasts per added node increase almost linearly, at 60 nodes $>900$ broadcasts are needed. 
 
 \paragraph{Performance}
-    
-\cite{Sundararaman05} 
 
-
-\subsection{Average Time Synchronization Protocol}
+\subsection{Average Time Synchronization Protocol} %Should probably be merged with  consensus vs. non-consensus
 According to \citet{SchenatoFiorentin11}, one of the weaknesses of ATS is it's inaccuracy when utilizing it on larger networks. The further the "hop distance", that is the path from one node to another through it's neighbors, the greater the error of synchronization. However the error between adjacent nodes is said to only be weakly affected by the size of the network. ATS' performance is said to worsen for long synchronization periods. Compared to FTSP, ATS is shown to have a slightly better performance. It also exhibits a consistent lowering of synchronization error while FTSP often has sudden irregular spikes in error.
 
 
