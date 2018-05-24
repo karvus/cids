@@ -56,7 +56,7 @@ public class Network {
     private final List<Node> nodeList = new ArrayList<>();
     
     private final WSNLogger LOGGER = new WSNLogger("Network", this);
-    private final int MSG_DELAY = 5;
+    public static int MSG_DELAY = 50;
     
     /**
      * Adds a Node to our network

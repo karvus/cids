@@ -46,6 +46,7 @@ public class WSNLogger {
     /** Writes a message to the log file */
     public void write(String str) {
         try {
+            this.info("Writing "+str+" to "+LOG_FILE);
             LOG_FILE.write(str+"\n");
         } catch (IOException ex) {
             this.err("Failed to write to log: "+ex.getLocalizedMessage());
