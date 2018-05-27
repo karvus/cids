@@ -3,8 +3,6 @@
 \usepackage[T1]{fontenc}
 \usepackage[round]{natbib}
 \bibliographystyle{humannat}
-%\usepackage[sorting=nyt,citestyle=authoryear]{biblatex}
-%\addbibresource{report.bib}
 \usepackage[normalem]{ulem}
 \usepackage[hidelinks]{hyperref}
 \usepackage{libertine}
@@ -26,8 +24,8 @@
 \usepackage{xfrac}
 \usepackage{mathtools}
 
-\pgfplotsset{compat=newest} % Allows to place the legend below plot
-\usepgfplotslibrary{units} % Allows to enter the units nicely
+\pgfplotsset{compat=newest} 
+\usepgfplotslibrary{units} 
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -38,8 +36,8 @@
 \cfoot{}
 \rfoot{\thepage}
 \renewcommand{\footrulewidth}{0pt}
-\setcounter{secnumdepth}{2}
-\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
 
 \date{\today}
 \title{Reaching Time Consensus with ATS and MMTS \vskip 0.3em
@@ -57,25 +55,41 @@
 
 \pagenumbering{roman}
 
+\renewcommand{\baselinestretch}{1.44}
+
+
 \begin{document}
 
 \maketitle
 
-\setlength{\baselineskip}{1.44\baselineskip}
 
 \begin{abstract}
-Clock synchronization is a widely known problem that has many applications. E.g. multiple clients in a distributed system must agree on a single time in order to successfully tackle a problem. It is a crucial part in making sure that events happen in the correct order in a distributed system, which it is important that they do, in a lot of cases.
-The problem has been worked on since the birth of computer networks, and solutions have evolved over time in response to changing demands. In recent years, consensus based algorithms have gained traction with the propagation of Internet of Things, and several new algorithms have been developed as a result.
+Clock synchronization is a widely applicable problem. It is a crucial part of any distributed system in which the ordering of events is important.
 
-We will compare two recent consensus-based algorithms for clock synchronization in distributed systems, Average TimeSynch (ATS) and Maximum Minimum Time Sync (MMTS), and implement them. The comparison will be based on the theoretical work from the algorithms' authors, our own analysis, and an implementation of both algorithms in virtual distributed networks. Maximum Minimum Time Sync appears to reach consensus quicker than Average TimeSynch. ATS is also impacted by high latencies, where MMTS is not impacted as much by high latencies.
+In recent years consensus-based algorithms have gained traction, and several new such algorithms have been developed as a result.
+
+In this paper we will compare two recent consensus-based algorithms for clock synchronization in distributed systems: Average TimeSynch (ATS) and Maximum Minimum Time Sync (MMTS). The comparison will be based on the theoretical work from both algorithms' authors, and an implementation of both algorithms in virtual distributed networks.
+
+We find that Maximum Minimum Time Sync appears to reach consensus quicker than Average TimeSynch, especially at high latencies. These results validate the experimental work done in \citet{HeLiChenCheng13}.
+%Clock synchronization is a widely known problem that has many applications. E.g. multiple clients in a distributed system must agree on a single time in order to successfully tackle a problem. It is a crucial part in making sure that events happen in the correct order in a distributed system, which it is important that they do, in a lot of cases.
+%The problem has been worked on since the birth of computer networks, and solutions have evolved over time in response to changing demands. In recent years, consensus based algorithms have gained traction with the propagation of Internet of Things, and several new algorithms have been developed as a result.
+
+%We will compare two recent consensus-based algorithms for clock synchronization in distributed systems, Average TimeSynch (ATS) and Maximum Minimum Time Sync (MMTS), and implement them. The comparison will be based on the theoretical work from the algorithms' authors, our own analysis, and an implementation of both algorithms in virtual distributed networks. Maximum Minimum Time Sync appears to reach consensus quicker than Average TimeSynch. ATS is also impacted by high latencies, where MMTS is not impacted as much by high latencies.
 \end{abstract}
 
 \clearpage
+
+
+\renewcommand{\baselinestretch}{0.9}
+
 \tableofcontents
 \clearpage
 
 \pagenumbering{arabic}
 \setcounter{page}{1}
+
+\renewcommand{\baselinestretch}{1.42}
+
 
 \section{Introduction}
 
@@ -88,7 +102,7 @@ Time synchronization algorithms are many and varied, and have evolved over sever
 \begin{itemize}
     \item Describe the time synchronization problem. Why is it necessary? Why is it not trivial? 
     \item Describe the advantages and disadvantages of the different kinds of time synchronization strategies (non-consensus vs. consensus)
-    \item Describe and analyze the consensus-based algorithms Average TimeSync and Modified Maximum Time Sync.
+    \item Describe and analyze the consensus-based algorithms Average TimeSync (ATS) and Maximum Minimum Time Sync (MMTS).
     \item Compare the algorithms, their advantages and disadvantages, and their areas of application (through both implementation and theoretical analysis).
 \end{itemize}
 
@@ -97,7 +111,7 @@ Time synchronization algorithms are many and varied, and have evolved over sever
 \begin{quote}
   A distributed system is a collection of autonomous computing
   elements that appears to its users as a single, coherent
-  system.\cite{TanenbaumSteen06}
+  system.\citep{TanenbaumSteen06}
 \end{quote}
 
 Distributed systems are in essence networks of interconnected computing elements, capable of sending messages to each other. Characteristically, these computing elements are completely autonomous: although they may act on information provided by other computing elements, they are separate entities and have no knowledge of each others state beyond what is communicated to them.
@@ -114,7 +128,7 @@ processes can be considered users; indexing crawlers like Google are
 examples of computer process users.
 
 The type of distributed systems that ATS and MMTS are developed for are Wireless Sensor
-Networks (WSNs). Here the nodes are small, cheap devices, capable of communicating with each other wirelessly. Due to their low cost and small size, resulting in a low barrier of entry and a wide area of application, these devices have grown increasingly popular in recent years. However, due to the fragility of wireless communication and inexpensive hardware, these devices are prone to failure, resulting in a frequently changing distributed system structure\cite{LucaFiorentin11}.
+Networks (WSNs). Here the nodes are small, cheap devices, capable of communicating with each other wirelessly. Due to their low cost and small size, resulting in a low barrier of entry and a wide area of application, these devices have grown increasingly popular in recent years. However, due to the fragility of wireless communication and inexpensive hardware, these devices are prone to failure, resulting in a frequently changing distributed system structure \citep{LucaFiorentin11}.
 
 \subsection{Consensus}
 In a distributed system consisting of autonomous nodes, nodes must share some state. As the current time can be described as such a state, agreeing on, and propagating the agreed on state is the primary focus of time synchronization algorithms. The approaches are many and varied, but can usually be grouped into \textit{non-consensus-based algorithms} and \textit{consensus-based algorithms}.
@@ -136,18 +150,19 @@ An alternative problem is reaching consensus on a shared time in a network, rega
 \subsubsection{Clock modelling}
 %Clock drift
 
-The hardware clock available to each node is often a low precision clock, whose time progression rate is not necessarily equal to that of other clocks. This means that over time, the output of the hardware clock will slowly drift away from other clocks. As the clock may have drifted considerably before the clock is observed, this also results in an initial time offset.
+The hardware clock available to each node is often a low precision clock, whose time progression rate is not necessarily equal to that of other clocks. This means that over time, the output of the hardware clock will slowly drift away from other clocks. As the clock may have drifted considerably before the clock is observed, this also results in an initial time offset. \citep{LucaFiorentin11}
 
 For the sake of modelling such a clock the concept of a virtual absolute time $t$ is introduced. This time is not known to any nodes, but is a useful tool, as it allows us to express the output of a given clock as a function of the current absolute time.
 
-As such the local hardware clock $\tau$ of a node $i$ can be modelled as a linear function with two parameters, the skew $\alpha$ and the offset $\beta$:
+As such the local hardware clock $\tau$ of a node $i$ can be modelled as a linear function with two parameters, the skew $\alpha$ and the offset 
+$\beta$:
 
 
 \begin{equation}\label{eq:hardware-clock}
     \tau_i(t) = \alpha_i t + \beta_i.
 \end{equation}
 
-It is important to note that as $t$ is not known, neither $\alpha$ nor $\beta$ can be calculated directly. The only aspect of the hardware clock visible to the node is the output $\tau(t)$.
+It is important to note that as $t$ is not known, neither $\alpha$ nor $\beta$ can be calculated directly \citep{LucaFiorentin11}. The only aspect of the hardware clock visible to the node is the output $\tau(t)$.
 
 As the goal of clock synchronization is to find a way for every node in a network to report the same time at a given $t$ despite differing hardware clocks, equation \ref{eq:hardware-clock} must be transformed into a function that can be modified by the node. For this reason, the concept of logical clocks $L$ is introduced, defined as
 
@@ -156,15 +171,16 @@ As the goal of clock synchronization is to find a way for every node in a networ
         &= \hat\alpha_i \alpha_i t + \hat\alpha_i \beta_i + \hat\beta_i. \label{eq:logical-clock-expanded}
 \end{align}
 
-Modifying $\hat\alpha_i$ and $\hat\beta_i$ allows the node to change the output of the logical clock in relation to $t$, without knowing the parameters of the hardware clock $\tau$.
+Modifying $\hat\alpha_i$ and $\hat\beta_i$ allows the node to change the output of the logical clock in relation to $t$, without knowing the parameters of the hardware clock $\tau$. \citep{LucaFiorentin11}
 
 The goal of reaching consensus can thus be formalized in terms of logical clocks: As equation \ref{eq:logical-clock-expanded} makes clear, having two logical clocks $L_i$ and $L_j$ agree on the output at a given $t$ means having the parameters $\hat\alpha_i \alpha_i \approx \hat\alpha_j \alpha_j$ and $\hat\alpha_i \beta_i + \hat\beta_i \approx \hat\alpha_j \beta_j + \hat\beta_j$. Note that this does not mean that $\hat\alpha_i \approx \hat\alpha_j$, nor that $\hat\beta_i \approx \hat\beta_j$, as the parameters of the hardware clocks are likely to differ.
 
-Expanding this to the entire network, reaching consensus can be formalized as reaching the point where $\hat\alpha_i \alpha_i \approx A$ and $\hat\alpha_i \beta_i + \hat\beta_i \approx B$, with $A$ and $B$ being network-global constants, for every node $i$ in the network.
+Expanding this to the entire network, reaching consensus can be formalized as reaching the point where $\hat\alpha_i \alpha_i \approx A$ and $\hat\alpha_i \beta_i + \hat\beta_i \approx B$, with $A$ and $B$ being network-global constants, for every node $i$ in the network. \citep{LucaFiorentin11}
 
-%\subsubsection{Issues facing time sync} 
+\subsubsection{Issues in message transmission} 
 
-\clearpage
+To time synchronization algorithms clock drift and faulty node is not exclusively an issue. As mentioned by \cite{Maroti04,Sundararaman05} there are many different factors that time synchronization algorithms must take into account. One of these is send time and/or receive time, this is time spent assembling or decoding the message has been received or is to be sent. This varies from 0 to 100 ms. Access to the network is also a factor, this is estimated to cost from 10 to 500 ms, varying on how congested the Medium Access Control (MAC) layer is. This does not take into account transmission time and propagation time throughout the network, these two are minuscule compared to other factors. However transmission failure due to restricted bandwidth, lacking transmission range, and other forms of interference with the wireless connection, is an ongoing issue that the algorithms must have the ability to handle. Before a message is to be sent, or after it has been received it must be either encoded or decoded. This is dependent on the speed of the processor, and the load on the processor. As \cite{Maroti04} also suggests byte alignment between sender and receiver to be a factor, as reception in the middle of a processor cycle. Thus the receiver must align the received bytes correctly. This causes a delay from 0 to about 400 microseconds, depending on the speed of the processor.
+
 
 \section{Strategies for time synchronization}
 
@@ -176,10 +192,9 @@ By and large there are two ways of approaching the time synchronization problem,
     The non-consensus synchronization strategy is what we previously described as utilizing a very precise clock as a authoritative reference. The other clocks of the network change their clocks to match this "leader" clock.
     Examples of non-consensus time synchronization algorithms are The Berkeley algorithm, Reference Broadcast Synchronization (RBS), Timing-sync Protocol for Sensor Netorks (TPSN) and The Flooding Time Sync Protocol (FTSP). All of these algorithms incorporate some form of master-slave relationship. Regarding RBS, TPSN and FTSP, these are tailored to Wireless Sensor Networks (WSN).
     
-    %Not sure if it should be included
-    \paragraph{The Berkeley algorithm} The simplest algorithms is the Berkeley algorithm, as describes by \citet{Gusella89}, the algorithm works by having a centralized time server polling the nodes for their current clock value. The time server then averages these clock values, along with its own clock value. The time server then instructs each node to adjust to the averaged clock value. 
+    \subsubsection{The Berkeley algorithm} The simplest algorithms is the Berkeley algorithm, as describes by \citet{Gusella89}, the algorithm works by having a centralized time server polling the nodes for their current clock value. The time server then averages these clock values, along with its own clock value. The time server then instructs each node to adjust to the averaged clock value. 
 
-    \paragraph{RBS} The Reference Broadcast Synchronization algorithm, described by \citet{ElsonGirodEstrin02},  functions by a central node sending out a reference packet to each node. Each node then records the time at which the reference packet was received. %Exhanging of recorded clock times? 
+    \subsubsection{RBS} The Reference Broadcast Synchronization algorithm, described by \citet{ElsonGirodEstrin02},  functions by a central node sending out a reference packet to each node. Each node then records the time at which the reference packet was received. %Exhanging of recorded clock times? 
     The nodes should then compare their results. This is done by calculating their offset relative to another receiver. The offset is calculated by 
     \begin{equation}
         \label{offsetcalc}
@@ -190,7 +205,7 @@ By and large there are two ways of approaching the time synchronization problem,
     $$\textit{Offset}[i,j](t) = \alpha t + \beta$$
     The node then stores this information about the node's relative drift between its clock and any other node in the network (of which is it maintains a relative clock). This creates clusters of synchronized nodes, which all are connected to the root node.
     
-    \paragraph{TPSN} The Timing-sync Protocol for Sensor Networks protocol, described by \citet{GaneriwalEtAl03}, functions by selecting a node as the root node. At first the algorithm enters the "level discovery phase", in this  phase each node is assigned a level. This is done the root node sending out a \texttt{level\_discovery} packet. Then each node assigns itself to a level lower than from which at received the packet. This node then broadcasts a \texttt{level\_discovery} packet. The algorithm then enters the synchronization phase, it uses sender-receiver synchronization. This sets it apart from RBS, which uses receiver-receiver synchronization. This mean that the receiver synchronizes to the sender. The time is synchronized by calculating the clock drift and the propagation time between nodes. As seen on figure \ref{timemeasuretpsn}, the receiver node A sends a synchronization pulse to the sender B, which is located at a greater level. Node A sends a synchronization pulse to B, which in turn sends back an acknowledgement packet. This acknowledgement packet contains the values of $T_1$, $T_2$ and $T_3$. The times $T$ are stamped at the Medium Access Control (MAC) layer instead of at the application layer. This is done to reduce the time stamping error.  Then the final time $T_4$ is recorded by node A.  From these values the clock drift ($\Delta$) and propagation delay ($d$) between the two nodes can be calculated. 
+    \subsubsection{TPSN} The Timing-sync Protocol for Sensor Networks protocol, described by \citet{GaneriwalEtAl03}, functions by selecting a node as the root node. At first the algorithm enters the "level discovery phase". In this  phase each node is assigned a level. This is done by having the root node sending out a \texttt{level\_discovery} packet. Then each node assigns itself to a level lower than from which at received the packet. This node then broadcasts a \texttt{level\_discovery} packet. The algorithm then enters the synchronization phase, it uses sender-receiver synchronization. This sets it apart from RBS, which uses receiver-receiver synchronization. This mean that the receiver synchronizes to the sender. The time is synchronized by calculating the clock drift and the propagation time between nodes. As seen on figure \ref{timemeasuretpsn}, the receiver node A sends a synchronization pulse to the sender B, which is located at a greater level. Node A sends a synchronization pulse to B, which in turn sends back an acknowledgement packet. This acknowledgement packet contains the values of $T_1$, $T_2$ and $T_3$. The times $T$ are stamped at the Medium Access Control (MAC) layer instead of at the application layer. This is done to reduce the time stamping error.  Then the final time $T_4$ is recorded by node A.  From these values the clock drift ($\Delta$) and propagation delay ($d$) between the two nodes can be calculated. 
     
     $$\Delta = \frac{(T_2-T_1) - (T_4 - T_3)}{2} \quad ; \quad d = \frac{(T_2-T_1) + (T_4-T_3)}{2}$$
     
@@ -219,7 +234,7 @@ By and large there are two ways of approaching the time synchronization problem,
     In general the synchronization is initiated by the root node. By instructing level 1 nodes to synchronize to the root node. When the level 1 nodes are synchronized, the level 2 nodes are synchronized and so forth. Regarding performance TPSN has been shown to have twice the performance of RBS.
     
     
-    \paragraph{FTSP} %allegedly one of the best non-consensus algorithms
+    \subsubsection{FTSP} %allegedly one of the best non-consensus algorithms
     The Flooding Time Sync Protocol, is described by \citet{Maroti04}. The objective of the Flooding Time Sync Protocol is to achieve synchronization of the clocks of the participating nodes. As opposed to TPSN, FTSP keeps an ad-hoc structure of the nodes. Figure \ref{adhoc} illustrates such a network structure.
     
     \begin{figure}
@@ -260,24 +275,24 @@ By and large there are two ways of approaching the time synchronization problem,
         \caption{Illustration of an ad-hoc network structure, with 14 nodes of which one is the leader.}
     \end{figure}
     %Time-stamping
-    The FTSP uses a radio broadcast, which contains the senders' time stamp. Upon receiving the broadcast the local time is recorded. The receiver then calculates its bit offset, so it can interpret the data from the sender correctly. The data is then followed by some check bytes called CRC bytes. FTSP has a different way of time stamping than TPSN (which time stamps at MAC layer). The FTSP time stamps seeks to reduce irregularities in the handling of interrupts and encoding and decoding. Irregularities occur in the handling of interrupts, when interrupts are disabled for a short period of time on the receiving microcontroller. The irregularities is reduced by taking the minimum of the time stamps. This approach results in a time stamping accuracy of $1.4 \mu \text{s}$ between transmitters and receivers.
+    The FTSP uses a radio broadcast, which contains the senders' time stamp. Upon receiving the broadcast, the local time is recorded. The receiver then calculates its bit offset, so it can interpret the data from the sender correctly. The data is then followed by some check bytes called CRC bytes. FTSP has a different way of time stamping than TPSN (which time stamps at MAC layer). The FTSP time stamps seeks to reduce irregularities in the handling of interrupts and encoding and decoding. Irregularities occur in the handling of interrupts, when interrupts are disabled for a short period of time on the receiving microcontroller. The irregularities is reduced by taking the minimum of the time stamps. This approach results in a time stamping accuracy of $1.4 \mu \text{s}$ between transmitters and receivers.
     
     %Management of clock drift
     
     As we know the oscillation of a quartz crystal can be irregular. Because of this clocks will drift apart relative to each other after some time. To maintain the previously mentioned accuracy of a few microseconds, continuous and frequent synchronization would be required. Instead of having a high synchronization frequency, which would congest the network. The algorithm instead estimates the offset of the local clock relative to the global time. 
     
     
-    This is done by applying linear regression to the offset, between the clock of the local node and the clock of the transmitter, relative to time passed. Thus the offset can be estimated. In an experiment conducted in the paper, with a time synchronization interval of 30 seconds and a query interval of 18 seconds, the average error was $1.48 \mu \text{s}$ when using single hop between two nodes. Whereas TPSN and RBS acheived $16.9 \mu \text{s}$ and $29.1 \mu \text{s}$ respectively, when using single hop between two nodes. As stated by \cite{LucaFiorentin11} FTSP is considered the de facto standard for time synchronization because of its resistance to network topology changes.   
+    This is done by applying linear regression to the offset, between the clock of the local node and the clock of the transmitter, relative to time passed. Thus the offset can be estimated. In an experiment conducted in the paper, with a time synchronization interval of 30 seconds and a query interval of 18 seconds, the average error was $1.48 \mu \text{s}$ when using single hop between two nodes. Whereas TPSN and RBS acheived $16.9 \mu \text{s}$ and $29.1 \mu \text{s}$ respectively, when using single hop between two nodes. As stated by \citet{LucaFiorentin11} FTSP is considered the de facto standard for time synchronization because of its resistance to network topology changes.   
     
     %Multihop synchronization
     
     \subsection{Consensus}
     %Description of Consensus as a concept here.
-    Consensus based synchronization strategies do not utilize a reference node to correctly synchronize nodes \cite{HeLiChenCheng13}. Instead these protocols are completely distributed and can be utilized in more dynamic network topologies without a common root.
+    Consensus based synchronization strategies do not utilize a reference node to correctly synchronize nodes \citep{HeLiChenCheng13}. Instead these protocols are completely distributed and can be utilized in more dynamic network topologies without a common root.
     
     To analyze the consensus-based algorithms, Average Time Synchronization (ATS) and Modified Maximum Time Synchronization (MMTS), we researched their creation and how they function. The following sections describe these algorithms to provide a basis of knowledge before their comparison.
     
-    \paragraph{ATS} The Average Time Synchronization, as described by \citet{LucaFiorentin11}, uses three important operations to achieve it's synchronization between nodes in the network: Relative drift estimation, drift compensation and offset compensation. The algorithm utilizes a pseudo-periodic broadcast as it's communication protocol between nodes. The nodes each transmits a set of information to all of it's neighbors with a period $\mathrm{T}$. The instants in which the nodes transmit is defined as 
+    \subsubsection{ATS} The Average Time Synchronization, as described by \citet{LucaFiorentin11}, uses three important operations to achieve it's synchronization between nodes in the network: Relative drift estimation, drift compensation and offset compensation. The algorithm utilizes a pseudo-periodic broadcast as it's communication protocol between nodes. The nodes each transmits a set of information to all of its neighbors with a period $\mathrm{T}$. The instants in which the nodes transmit is defined as 
     
     \begin{equation}
         t^i_\ell = \frac{\ell\mathrm{T} - \beta_i}{\alpha_i} = \ell\mathrm{T}_i + \bar{\beta_i},
@@ -306,7 +321,7 @@ By and large there are two ways of approaching the time synchronization problem,
     
     Where $\rho_\eta \in (0, 1)$ is a tuning parameter, and $t^+$ is the clock update. $\eta_{ij}$ converges towards $\alpha_{ij}$ thereby making (5) and (6) a valid way to estimate the skew difference between two nodes and allowing us to align them.
     
-    Drift compensation is what follows the estimation. Each node stores its own estimate of the global clock rate and uses this estimate in the compensation to reach a common clock rate $\bar{\alpha}$. The algorithm then messages it's neighbors and uses the received information, to average it's estimate with the estimate of its neighbors. When a message is sent from node i to node j at time $t^j_\ell$ it changes it's own estimate value $\hat{\alpha}$ by doing
+    Drift compensation is what follows the estimation. Each node stores its own estimate of the global clock rate and uses this estimate in the compensation to reach a common clock rate $\bar{\alpha}$. The algorithm then messages its neighbors and uses the received information, to average its estimate with the estimate of its neighbors. When a message is sent from node i to node j at time $t^j_\ell$ it changes its own estimate value $\hat{\alpha}$ by doing
     
     \begin{equation}
         \hat{\alpha_i}(t^+) = \rho_v\hat\alpha_i(t) + (1 - \rho_v)\eta_{ij}(t)\hat\alpha_j(t), \ t = t^j_\ell, \ i \in \mathcal{N}_j.
@@ -323,7 +338,7 @@ By and large there are two ways of approaching the time synchronization problem,
     
     Each node computes the estimated clock difference $\hat\tau_j(t) - \hat\tau_i(t)$ and attempts to adjust it's own clock offset to minimize this difference. The offset compensation is not required to wait for the drift compensation to finish synchronizing all the clock speeds. Instead it is applied simultaneously, yielding a better performance and quicker convergence.  
     
-    \paragraph{MMTS} The Maximum Minimum Time Synchronization algorithm is a modified version of the already well-performing MTS protocol. It aims to correct some of the weaknesses of MTS by also having minimum consensus introduced in the algorithm. Using both maximum and minimum consensus, it aims to reach consensus as quickly as possible, while also keeping a time skew that closer to 1 than that of MTS. The time of said unified clock may not be the actual time, but reaching a consensus is often more crucial than staying close to the actual time.
+    \subsubsection{MMTS} The Maximum Minimum Time Synchronization algorithm is a modified version of the already well-performing MTS protocol. MMTS was created and examined by \citet{HeLiChenCheng13}, and is a modified version of MTS, which origins from \citet{HeChengShiChen11}. It aims to correct some of the weaknesses of MTS by also having minimum consensus introduced in the algorithm. Using both maximum and minimum consensus, it aims to reach consensus as quickly as possible, while also keeping a time skew that closer to 1 than that of MTS. The time of said unified clock may not be the actual time, but reaching a consensus is often more crucial than staying close to the actual time.
     The method to converge that MMTS uses is that each node in the network will, at a certain interval $T$, broadcast it's time to the neighbours. Upon receival of such a message, the node will compute a skew that is relative to the previous message received from that sender:
     \begin{equation}
         \alpha_{ij}(k) = \frac{\frac{\tau_j(t_k) - \tau_j(t_{k-1})}{\tau_i(t_k)-\tau_i(t_{k-1})} + (k-1)\alpha_{ij}(k-1)}{k}
@@ -397,7 +412,6 @@ By and large there are two ways of approaching the time synchronization problem,
     
     
 %Describe algorithms Average TimeSync and Modified Maximum Time Sync.
-\clearpage
 
 \section{Analysis}
 
@@ -405,28 +419,28 @@ In this section we analyze different strategies of clock synchronization. We dis
 
 \subsection{Non-consensus vs. Consensus}
 
-\paragraph{Changes in network topology} As stated earlier there are several key differences between non-consensus and consensus based algorithms. As stated by \cite{SchenatoGamba07}, consensus based time synchronization algorithms are more resistant to node failure, as they are fully distributed. This differs from non-consensus based algorithms, which are less robust, regarding node failure and node appearance. This is the case in all non-consensus, where a new node needs to be elected as the leader. As shown by \citet{HeLiChenCheng13} MTS (of which MMTS is a variant) a restarted node synchronizes after 2 synchronization cycles, thus the synchronization is not affected. The same pattern is followed when a new node joins the network. This differs from TPSN, where a new node joining, or a node restarting, requires other nodes at the lower level to re-synchronize, or the joining node to request an assignment to a level. This process consumes resources and is not as fast as MMTS. 
+\subsubsection{Changes in network topology} As stated earlier there are several key differences between non-consensus and consensus based algorithms. As stated by \citet{SchenatoGamba07}, consensus based time synchronization algorithms are more resistant to node failure, as they are fully distributed. This differs from non-consensus based algorithms, which are less robust, regarding node failure and node appearance. This is the case in all non-consensus, where a new node needs to be elected as the leader. As shown by \citet{HeLiChenCheng13} MTS (of which MMTS is a variant) a restarted node synchronizes after 2 synchronization cycles, thus the synchronization is not affected. The same pattern is followed when a new node joins the network. This differs from TPSN, where a new node joining, or a node restarting, requires other nodes at the lower level to re-synchronize, or the joining node to request an assignment to a level. This process consumes resources and is not as fast as MMTS. 
 
-\paragraph{Organization of nodes} The non-consensus algorithms also have different way of organizing nodes, eg. RBS has an ad hoc approach, where the receiving nodes are synchronized relative to one another. TPSN has a spanning tree based approach. And FTSP has an ad hoc approach. Having an ad hoc approach saves time building a spanning tree, and is more resistant to node and connection failures. This is not an issue a completely distributed consensus algorithm.
+\subsubsection{Organization of nodes} The non-consensus algorithms also have different ways of organizing nodes, eg. RBS has an ad hoc approach, where the receiving nodes are synchronized relative to one another. TPSN has a spanning tree based approach. And FTSP has an ad hoc approach. Having an ad hoc approach saves time building a spanning tree, and is more resistant to node and connection failures. This is not an issue with a completely distributed consensus algorithm.
 
-\paragraph{Scalability}
+\subsubsection{Scalability}
 
-WSN can be of significant scale (150+ nodes). For an algorithm to be applicable in such a large network it needs to be shown to do so. TPSN has been shown to work in a large scale network of 150 to 300 nodes. As specified by \cite{GaneriwalEtAl03}, the performance is due to networks hierarchical structure, as it is possible to find a shortest path to each node. And by using multihop it is possible to communicate to each node, however this introduces synchronization errors and the larger the hop, the larger the error. Regarding MMTS it has been shown by \citet{HeLiChenCheng13} that MTS requires more broadcasts to converge as the number of nodes increase. The number of broadcasts per added node increase almost linearly, at 60 nodes $>900$ broadcasts are needed. 
+WSNs can be of significant scale (150+ nodes). TPSN has been shown to work in such a large scale network of 150 to 300 nodes. As specified by \citet{GaneriwalEtAl03}, the performance is due to networks hierarchical structure, as it is possible to find a shortest path to each node. And by using multihop it is possible to communicate to each node, however this introduces synchronization errors and the larger the hop, the larger the error. This is the case for both non-consensus and consensus. Regarding MMTS it has been shown by \citet{HeLiChenCheng13} that MTS requires more broadcasts to converge as the number of nodes increase. The number of broadcasts per added node increase almost linearly, at 60 nodes $>900$ broadcasts are needed. 
 
-\paragraph{Performance}
+\subsubsection{Performance}
 
-As indicated by \cite{LucaFiorentin11} ATS achieves slightly better performace than FTSP, which performs better than RBS and TPSN. In this experiment on a 3x3 WSN, FTSP had some big errors, which occurred at random intervals throughout the experiment. Also FTSP had a overall higher average synchronization error per tick.
+As indicated by \citet{LucaFiorentin11} ATS achieves slightly better performace than FTSP, which performs better than RBS and TPSN. In this experiment on a 3x3 WSN, FTSP had some big errors, which occurred at random intervals throughout the experiment. Also FTSP had a overall higher average synchronization error per tick.
 
 \subsection{Performance of Average Time Synchronization Protocol} 
 
 According to \citet{LucaFiorentin11}, one of the weaknesses of ATS is it's inaccuracy when utilizing it on larger networks. The further the "hop distance", that is the path from one node to another through it's neighbors, the greater the error of synchronization. However the error between adjacent nodes is said to only be weakly affected by the size of the network. ATS' performance is said to worsen for long synchronization periods.
 
-In \citet{HeChengShiChen13}, a paper suggesting a more secure version of ATS, ATS' is demonstrated to have significant weaknesses when errors are caused deliberately. It describes how planted attack nodes can thoroughly worsen it's performance and even prevent synchronization completely. An attack node would be able to freely alter it's own hardware clock and send false messages to it's neighbors, thereby hindering the synchronization process. An attack node essentially has complete control over it's neighbors. When it receives a message with it's neighbors skew it can use this reading and it's own ability to freely alter it's hardware clock to control what it's neighbors computes as it's estimated average.
+In \citet{HeChengShiChen13}, a paper suggesting a more secure version of ATS, ATS is demonstrated to have significant weaknesses when errors are caused deliberately. It describes how planted attack nodes can thoroughly worsen its performance and even prevent synchronization completely. An attack node would be able to freely alter its own hardware clock and send false messages to its neighbors, thereby hindering the synchronization process. An attack node essentially has complete control over its neighbors. When it receives a message with its neighbors skew it can use this reading and it's own ability to freely alter its hardware clock to control what its neighbors computes as its estimated average.
 
 \subsection{Performance of Maximum Minimum Time Synchronization Protocol}
 In many areas, the MMTS protocol performs better than ATS. It has as much faster convergence rate, and they both have a similar synchronization error at less than 10 ticks. The biggest disadvantage that MTS had compared to ATS was that MTS would be more prone to reach consensus at a time further from the actual time, as it would always adopt the time time of the clock that is the furthest ahead. Moreover, MTS would often reach a logical clock with a time skew greater than 1, while a time skew closer to 1 like that of ATS is more desirable. However, these weaknesses has been targeted by the introduction of the minimum consensus to the MTS protocol. The MMTS both features a synchronization error that is closer to 0 and a time skew that is closer to 1 than that of the MTS protocol, while still being able to maintain the good convergence rate of MTS. \citep{HeChengShiChen13}
 
-Additionally, MMTS performs well in the scenario where a new node is turned back on or added to the network. In only takes a few cycles for the network to be synchronized again. \citep{HeChengShiChen13}
+Additionally, MMTS performs well in the scenario where a new node is turned back on or added to the network. It only takes a few cycles for the network to be synchronized again. \citep{HeChengShiChen13}
 
 
 \section{Results}
@@ -441,7 +455,7 @@ This value is calculated every 100 milliseconds of algorithm execution. The resu
 
 For the data presented below, the tuning parameters of ATS were set to $\rho_\eta = \rho_v = \rho_o = 1 / 2$. The nodes in the virtual network were arranged in a $5\times5$ grid, with each node being able to send messages to their immediate neighbors.
 
-\subsubsection{Performance at varying communication delays}
+\subsection{Performance at varying communication delays}
 By varying the communication delay $\lambda$ of our simulation, while keeping the broadcasting interval $T$ constant at $T = 100 \text{ms}$, we were able to compare algorithm performance at various levels of latency.
 
 It is clear from figures \ref{fig:ats-latency} and \ref{fig:mmts-latency} that while ATS is heavily impacted by an increase in latency, MMTS is largely unaffected. As such, high latency leads to ATS performing relatively worse compared to MMTS, while they have similar performance at $0$ latency.
@@ -544,12 +558,12 @@ It is clear from figures \ref{fig:ats-latency} and \ref{fig:mmts-latency} that w
     \caption{MMTS performance at various broadcasting intervals $T$} \label{fig:mmts-interval}
 \end{figure}
 
-\subsubsection{Performance at varying broadcasting intervals}
+\subsection{Performance at varying broadcasting intervals}
 By varying the broadcasting interval $T$ of the algorithms, while keeping the communication delay $\lambda$ constant at $\lambda = 10 \text{ms}$, we were able to compare algorithm performance at various levels of bandwidth.
 
 Unlike the communication delay, both algorithms are significantly affected by changes in the broadcasting interval as shown by figures \ref{fig:ats-interval} and \ref{fig:mmts-interval}. Although MMTS still reaches stable synchronization quicker than ATS, the relative performance of the algorithms is significantly closer.
 
-\subsubsection{Overall relative performance}
+\subsection{Overall relative performance}
 It is of note that although MMTS appears to improve consensus quicker than ATS, it is highly unstable until roughly $t = 1500$ whereafter it stabilizes. ATS in comparison is significantly slower, especially at high latencies, but is more stable with no sudden major increases in error.
 
 \section{Discussion}
@@ -557,18 +571,11 @@ As the above data shows, MMTS has a faster convergence rate than ATS at realisti
 
 It is also of note that at $T = 100, \lambda = 10$ ATS reaches a minimum error of $\overline{E}(t) = 0.3\text{ms}$ at $t = 9600\text{ms}$, while MMTS reaches a minimum error of $\overline{E}(t) = 1.5\text{ms}$ at $t = 9900$. This indicates that ATS reaches a more precise consensus than MMTS over time.
 
-These results agree with the theoretical predictions performed in \cite{LucaFiorentin11} and \cite{HeLiChenCheng13}, as well as the experimental results from \cite{HeLiChenCheng13}.
+These results agree with the theoretical predictions performed in \citet{LucaFiorentin11} and \citet{HeLiChenCheng13}, as well as the experimental results from \citet{HeLiChenCheng13}.
 
 These results indicate that ATS is useful for long-running, low-latency environments, where node removal or introduction is infrequent. MMTS is comparatively better for high-latency environments where topology changes are frequent.
 
-For WSNs specifically, MMTS appears to better solve the specific challenges that come from inexpensive hardware and fragile communication methods, which was one of the primary motivations for its design \cite{HeLiChenCheng13}.
-
-\section{Future work}
-Comparing the algorithms in a real Wireless Sensor Network would provide data beyond that which is possible in our simple simulation network.
-
-Further testing the response of each algorithm to nodes being removed/introduced to the network, and thus a dynamic network topology, would also give valuable insight into the applications of each algorithm.
-
-Such work has already been performed to a limited degree in \cite{HeLiChenCheng13}.
+For WSNs specifically, MMTS appears to better solve the specific challenges that come from inexpensive hardware and fragile communication methods, which was one of the primary motivations for its design \citep{HeLiChenCheng13}.
 
 \section{Conclusion}
 %PROBLEM STATEMENT:
@@ -576,9 +583,9 @@ Such work has already been performed to a limited degree in \cite{HeLiChenCheng1
 %Describe the advantages and disadvantages of the different kinds of time synchronization strategies (non-consensus vs. consensus)
 %Describe and analyze the consensus-based algorithms Average TimeSync and Modified Maximum Time Sync.
 %Compare the algorithms, their advantages and disadvantages, and their areas of application (through both implementation and theoretical analysis).
-Synchronizing clocks is not as trivial as it may seem to an outsider, without the knowledge of the inner workings of a distributed system. Having a common basis, such as a common understanding of time, is crucial for almost any kind of conversation, and the importance of the algorithms that make it possible reach clocks that are close enough that they can be considered to have reached consensus. Those are algorithms such as Average TimeSynch (ATS) and Maximum Minimum Time Sync (MMTS), these each have their strengths and weaknesses.
+Synchronizing clocks is not as trivial as it may seem to an outsider, without the knowledge of the inner workings of a distributed system. Having a common basis, such as a common definition of time, is crucial for communication. This solidifies the importance of algorithms that makes time consensus possible in distributed systems. These are algorithms such as Average TimeSynch (ATS) and Maximum Minimum Time Sync (MMTS), which each have their strengths and weaknesses.
 
-As for non-consensus algorithms as Reference Broadcast Synchronization (RBS), Timing-sync Protocol for Sensor Netorks (TPSN) and The Flooding Time Sync Protocol (FTSP), these follow a master-slave relationship, although with different network structures. When comparing different metrics like resistance to changes in network topology, scalability and performance consensus-based algorithms are overall a better choice, as they are more resistant to change in network topology, and perform better in experiments as seen when comparing ATS and FTSP. Regarding scalability there haven't been conducted any experiments with 150+ nodes on MTS/MMTS, although rise in broadcast time is almost linear.
+As for non-consensus algorithms such as Reference Broadcast Synchronization (RBS), Timing-sync Protocol for Sensor Networks (TPSN) and The Flooding Time Sync Protocol (FTSP), these follow a master-slave relationship, although with different network structures. When comparing different metrics like resistance to changes in network topology, scalability and performance consensus-based algorithms are overall a better choice, as they are more resistant to change in network topology, and perform better in experiments as seen when comparing ATS and FTSP. 
 
 Upon inspection MMTS appears to be superior in important areas, such as how quickly it is able to reach consensus among the network, and how well it performs in cases such as a new node being added to the network or changes in network topography. However, ATS is has its advantages as well. It is relatively slow to reach consensus, when compared with MMTS, but once it does, it does so at a similar synchronization error level. 
 What might make it more appealing than MMTS in some cases, is when it is important not to stray too far from the actual time. 
@@ -586,11 +593,47 @@ This has been one weaknesses of MTS, which would be prone to stray further and f
 
 If we do not take straying off into account, our analysis as well as the data from our implementation show MMTS to be superior in terms of reaching consensus quickly. Though, with the different advantages and disadvantages of the two protocols, the ATS protocol cannot be deemed useless. In certain cases the weaknesses of using MMTS will outweigh it's strengths and ATS will be a better choice.
 
+\section{Future work}
+Comparing the algorithms in a real Wireless Sensor Network would provide data beyond that which is possible in our simple simulation network.
 
+Further testing the response of each algorithm to nodes being removed/introduced to the network, and thus a dynamic network topology, would also give valuable insight into the applications of each algorithm.
 
+Such work has already been performed to a limited degree in \citet{HeLiChenCheng13}.
 
-
-%\nocite{*} % print all bibliography, remove when actual citations are in place
 \bibliography{report}
+\clearpage
+\appendix
+
+\section{Process analysis}
+
+\subsection{Idea Phase (Week 14-15)}
+Our very first meeting as a group involved brainstorming a specific topic to research relevant to the overall project. We discussed various topics that utilize some sort of consensus in distributed systems. These were our initial ideas:
+
+\begin{itemize}
+    \item Load Balancing
+    \item Time Synchronization
+    \item Banking Transaction
+    \item Peer-to-peer video games
+    \item Block-chain
+\end{itemize}
+
+However, we agreed that these topics were all too broad. We would have to choose one and narrow it down further to a specific problem relating to one of these consensus fields. In the idea phase, our supervisor introduced us to a technique for breaking down the complexity of a problem. It involved studying a problem and attempting to break an otherwise too complicated task/problem down into smaller problems recursively, until a surmountable problem presented itself. This work phase also involved agreeing on how we would manage the project and distribute work. We also quickly started our research the same week, being provided with a few sources of literature to introduce us to the synchronization problem in depth. The second week we decided on clock synchronization as our consensus problem. We discussed a possible implementation of the algorithms and began brainstorming a problem statement.
+
+\subsection{Research phase (Week 16-17)}
+We transitioned into the research phase after we specified we wanted to work on the problem of time synchronization. Then we begun writing out our problem statement. While this was ongoing, we searched  for literature and we struck upon the consensus algorithms ATS and MMTS. Also looked at several different non-consensus algorithms we might incorporate into the report. 
+Later in the same week (17) we finished our preliminary abstract for use at the mid-way seminar the week after. We also deciding on creating a simulated WSN to test out ATS and MMTS.
+
+\subsection{Implementation and report (Week 18-21)}
+
+In week 18, after the mid-way seminar. At the mid-way seminar we didn't get much criticism, and thus didn't get much to improve or work on. However it was great to have a milestone to work towards. In this week we each assumed responsibility for at portion of the report or implementation.
+
+Much of the work on the report and implementation was done individually, which served us well, and we kept up communication especially as the deadline neared.  
+
+\subsection{Group meetings and communication}
+Throughout the idea and research phases, we would meet frequently and discuss our ideas and readings for the report. During the implementation and report phase, however, we would not meet as often, but we would distribute tasks that we would each finish before the next meeting. In between meetings, we would coordinate work in our online group chat.
+
+\subsection{Conclusion}
+Overall our process working on this project has been pretty satisfying. We had a few problems along the way, we struggled to make decisions on what to incorporate in the project, a few of our milestones collided with deadlines in other courses and communication with the supervisor sometimes led to confusion.
+
 
 \end{document}

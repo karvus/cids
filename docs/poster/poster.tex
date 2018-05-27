@@ -1,0 +1,125 @@
+\RequirePackage{xcolor}
+\documentclass{sciposter}
+\usepackage[utf8]{inputenc}
+\usepackage{lipsum}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usepackage[hidelinks]{hyperref}
+\pgfplotsset{compat=newest} 
+\usepgfplotslibrary{units} 
+\usepackage{float}
+\usepackage{multicol}
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\title{Reaching Time Consensus with ATS and MMTS}
+\date{\today}
+\author{Johan Ringmann Fagerberg, Marcus Møller, Lucas Olai Jarlkov Olsen,\\
+  Peter Heilbo Ratgen, Thomas Stenhaug}
+\institute{Institut for Matematik og Datalogi\\
+            Syddansk Universitet}
+\email{placeholder@sdu.dk}
+
+\begin{document}
+
+\maketitle
+
+\begin{multicols}{3}
+
+\begin{abstract}
+Clock synchronization is a widely applicable problem. It is a crucial part of any distributed system in which the ordering of events is important.
+
+In recent years consensus-based algorithms have gained traction, and several new such algorithms have been developed as a result.
+
+In this paper we will compare two recent consensus-based algorithms for clock synchronization in distributed systems: Average TimeSynch (ATS) and Maximum Minimum Time Sync (MMTS). The comparison will be based on the theoretical work from both algorithms' authors, and an implementation of both algorithms in virtual distributed networks.
+
+We find that Maximum Minimum Time Sync appears to reach consensus quicker than Average TimeSynch, especially at high latencies. These results validate the experimental work done in %\citet{HeLiChenCheng13}.
+\end{abstract}
+
+\section{Introduction}
+
+\lipsum[5]
+
+\section{Non-consensus}
+
+\subsection{TPSN}
+
+%At least include FTSP
+\subsection{FTSP}
+
+\section{Consensus}
+
+\subsection{ATS}
+
+\subsection{MMTS}
+
+
+\section{Non-consensus vs consensus}
+
+\section{Results}
+
+\begin{figure}[p!h]
+    \centering
+    \begin{tikzpicture}
+      \begin{axis}[
+          width=0.9\linewidth, % Scale the plot to \linewidth
+          grid=major, % Display a grid
+          grid style={dashed,gray!30}, % Set the style
+          xlabel=Time $t$, % Set the labels
+          ylabel=Average error $\overline{E}(t)$,
+          xmin=0,
+          xmax=10000,
+          ymin=0,
+          xtick={1000, 2000, 3000, 4000 ,5000 ,6000 ,7000 ,8000 ,9000, 10000},
+          ytick={100, 200, 300, 400 ,500 ,600 ,700 ,800 ,900, 1000},
+          x unit=ms, % Set the respective units
+          y unit=ms
+        ]
+        \addplot+[mark=none, ultra thick] table[x=Time,y=Error,col sep=comma] {../data/ats-10-20.csv}; 
+        \addplot+[mark=none, ultra thick] table[x=Time,y=Error,col sep=comma] {../data/ats-10-100.csv}; 
+        \addplot+[mark=none, ultra thick] table[x=Time,y=Error,col sep=comma] {../data/ats-10-500.csv}; 
+        
+        \legend{$T = 20 \text{ms}$,$T = 100 \text{ms}$,$T = 500 \text{ms}$}
+      \end{axis}
+    \end{tikzpicture}
+    %\caption{ATS performance at various broadcasting intervals $T$}
+    
+    \vspace*{3em}
+
+    \begin{tikzpicture}
+      \begin{axis}[
+          width=0.9\linewidth, % Scale the plot to \linewidth
+          grid=major, % Display a grid
+          grid style={dashed,gray!30}, % Set the style
+          xlabel=Time $t$, % Set the labels
+          ylabel=Average error $\overline{E}(t)$,
+          xmin=0,
+          xmax=10000,
+          ymin=0,
+          x unit=ms, % Set the respective units
+          y unit=ms,
+          xtick={1000, 2000, 3000, 4000 ,5000 ,6000 ,7000 ,8000 ,9000, 10000},
+          ytick={100, 200, 300, 400 ,500 ,600 ,700 ,800 ,900, 1000}
+        ]
+        \addplot+[mark=none, ultra thick] table[x=Time,y=Error,col sep=comma] {../data/mmts-10-20.csv}; 
+        \addplot+[mark=none, ultra thick] table[x=Time,y=Error,col sep=comma] {../data/mmts-10-100.csv}; 
+        \addplot+[mark=none, ultra thick] table[x=Time,y=Error,col sep=comma] {../data/mmts-10-500.csv}; 
+        
+        \legend{$T = 20 \text{ms}$,$T = 100 \text{ms}$,$T = 500 \text{ms}$}
+      \end{axis}
+    \end{tikzpicture}
+    %\caption{MMTS performance at various broadcasting intervals $T$}
+\end{figure}
+
+\section{Discussion}
+
+\lipsum[5]
+
+\section{Conclustion}
+
+\end{multicols}
+
+\end{document}
