@@ -24,7 +24,7 @@
   Peter Heilbo Ratgen, Thomas Stenhaug}
 \institute{Institut for Matematik og Datalogi\\
             Syddansk Universitet}
-\email{moell17@student.sdu.dk, OTHER EMAILS}
+\email{moell17@student.sdu.dk, tsten16@student.sdu.dk, OTHER EMAILS}
 
 \begin{document}
 
@@ -38,9 +38,9 @@
 
 Having a network of nodes agree on the current time isn't a trivial task. A proper solution has to not only achieve synchronization throughout the network, but has to do so despite communication delay in the network, nodes disappearing or reappearing, or potentially malicious nodes that attempt to throw off the synchronization.
 
-The common method of time synchronization is having one or more nodes decide on the current "true" time, and propagating this throughout the network. This is an example of a non-consensus algorithm, which are particularly fragile to nodes going offline or being malicious.
+The common method of time synchronization is having one or more nodes decide on the current ``true'' time, and propagating this throughout the network. This is an example of a non-consensus algorithm, which are particularly fragile to nodes going offline or being malicious.
 
-A recently popularized alternative is consensus-based algorithms, in which no nodes are more important than any others. In these algorithms a consensus must be reached amongst the nodes, until the entire network eventually agrees on a shared time value. As no specific node has more weight than any others, these algorithms are highly resistant to topology changes and malicious nodes.
+A recently popularized alternative is consensus-based algorithms, in which no nodes are more important than any others. In these algorithms a consensus must be reached amongst the nodes, until the entire network eventually agrees on a shared time value. As all nodes carry the same weights, these algorithms are highly resistant to topology changes and malicious nodes.
 
 %Graphs to illustrate the difference between a fully distributed system and a tree structure network.
 \begin{figure}[h!]
@@ -81,7 +81,7 @@ In a fully distributed system as described in the introduction, there is no mast
 %Brief description of ATS. Skip the math perhaps.
 Like the name implies, Average TimeSynch works by averaging the clocks of each node with the clocks of the neighboring nodes.
 
-It has three major parts that are utilized to achieve consensus. Each node periodically sends a message to each of it's neighboring nodes. This message contains a package of information about the sending node's clock. The neighbor uses this information for relative drift estimation, estimating how much quicker the sending node's clock progresses when compared to the neighbor's clock. The continuously transmitted messages, allow the nodes to calculate an estimate of the global drift across the network. The nodes use this estimate to correct it's own drift using drift compensation. Each node uses the messages to average their estimate with it's neighbors' stored estimate. Finally the nodes calculate an average offset between itself and it's neighbors and changes it's value to said estimate. Through repeated messaging the nodes in the network reach a very similar clock rate and reading, thereby reaching consensus.
+It has three major parts that are utilized to achieve consensus. Each node periodically sends a message to each of it's neighboring nodes. This message contains a package of information about the sending node's clock. The neighbor uses this information for relative drift estimation, estimating how much quicker the sending node's clock progresses when compared to the neighbor's clock. The continuously transmitted messages allow the nodes to calculate an estimate of the global drift across the network. The nodes use this estimate to correct its own drift using drift compensation. Each node uses the messages to average their estimate with its neighbors' stored estimate. Finally the nodes calculate an average offset between itself and its neighbors and changes its value to said estimate. Through repeated messaging the nodes in the network reach a very similar clock rate and reading, thereby reaching consensus.
 
 \subsection{Maximum Minimum Time Synchronization}
 % Brief description of MMTS.
@@ -93,13 +93,15 @@ By using this process to incrementally reach consensus amongst neighbors, the co
 
 \section{Non-consensus vs consensus}
 
+\lipsum[4]
+
 \section{Results}
 
 \begin{figure}[p!h]
     \centering
     \begin{tikzpicture}
       \begin{axis}[
-          width=0.9\linewidth, % Scale the plot to \linewidth
+          width=0.41\linewidth, % Scale the plot to \linewidth
           grid=major, % Display a grid
           grid style={dashed,gray!30}, % Set the style
           xlabel=Time $t$, % Set the labels
@@ -121,12 +123,10 @@ By using this process to incrementally reach consensus amongst neighbors, the co
       \end{axis}
     \end{tikzpicture}
     %\caption{ATS performance at various broadcasting intervals $T$}
-    
-    \vspace{3em}
-    
+    %\vspace{3em}
     \begin{tikzpicture}
       \begin{axis}[
-          width=0.9\linewidth, % Scale the plot to \linewidth
+          width=0.41\linewidth, % Scale the plot to \linewidth
           grid=major, % Display a grid
           grid style={dashed,gray!30}, % Set the style
           xlabel=Time $t$, % Set the labels
@@ -156,6 +156,7 @@ By using this process to incrementally reach consensus amongst neighbors, the co
 
 \section{Conclusion}
 
+\lipsum[5]
 
 \end{multicols}
 
