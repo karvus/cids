@@ -1,0 +1,164 @@
+\documentclass[25pt, a0paper, portrait, margin=0mm, innermargin=15mm, blockverticalspace=15mm, colspace=15mm, subcolspace=8mm]{tikzposter}
+\tikzposterlatexaffectionproofoff
+\usepackage[utf8]{inputenc}
+\usepackage{relsize}
+\usepackage{lipsum}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\pgfplotsset{compat=newest} 
+\usepgfplotslibrary{units}
+
+\title{Reaching Time Consensus with ATS and MMTS}
+% \titlegraphic{\includegraphics{sdu-logo.png}}
+\author{
+  {\smaller Johan R. Fagerberg, Marcus Møller, Lucas O. J. Olsen, Peter H. Ratgen, Thomas Stenhaug} \\
+  {\smaller \{jofag17,moell17,luols17,perat17,tsten16\}@student.sdu.dk}
+}
+\usetheme{Autumn}\usecolorstyle[colorPalette=BrownBlueOrange]{Germany}
+
+\begin{document}
+\maketitle
+\path (\titleposright,\titleposbottom) ++(-1cm,5mm) node[inner sep=0pt,above left] {\includegraphics{sdu-logo-white.png}};
+
+\begin{columns}
+  \column{0.45}
+  \block{Introduction}
+  {
+
+    Having a network of nodes agree on the current time isn't a
+    trivial task. A proper solution has to not only achieve
+    synchronization throughout the network, but has to do so despite
+    communication delay in the network, nodes disappearing or
+    reappearing, or potentially malicious nodes that attempt to throw
+    off the synchronization.
+
+    The common method of time synchronization is having one or more
+    nodes decide on the current ``true'' time, and propagating this
+    throughout the network. This is an example of a non-consensus
+    algorithm, which are particularly fragile to nodes going offline
+    or being malicious.
+
+    A recently popularized alternative is consensus-based algorithms,
+    in which no nodes are more important than any others. In these
+    algorithms a consensus must be reached amongst the nodes, until
+    the entire network eventually agrees on a shared time value. As
+    all nodes carry the same weights, these algorithms are highly
+    resistant to topology changes and malicious nodes.
+
+    \vspace{1em}
+
+    \begin{tikzpicture}[inner sep=0pt,minimum size=0.3cm,scale=4.3]
+      \input{network-non-distributed.tikz}
+    \end{tikzpicture}
+    \hspace{2em}
+    \begin{tikzpicture}[inner sep=0pt,minimum size=0.3cm,scale=4.3]
+      \input{network-distributed.tikz}
+    \end{tikzpicture}
+
+    We have examined two such consensus-based algorithms, Average
+    TimeSynch (\textbf{ATS}) and Maximum Minimum Time Synchronization
+    (\textbf{MMTS}).
+    
+  }
+
+  \block{Problem Statement}{
+    \begin{itemize}
+    \item Describe the time synchronization problem. Why is it necessary? Why is it not trivial? 
+    \item Describe the advantages and disadvantages of the different kinds of time synchronization strategies (non-consensus vs. consensus)
+    \item Describe and analyze the consensus-based algorithms Average TimeSync and Modified Maximum Time Sync.
+    \item Compare the algorithms, their advantages and disadvantages, and their areas of application (through both implementation and theoretical analysis).
+    \end{itemize}  
+  }
+
+  \block{Non-Consensus}{}
+  \block{Discussion}{}
+  \block{Conclusion}{}
+
+  % right column
+  
+  \column{0.55} 
+
+  \block{Consensus}{
+    
+    In a fully distributed system as described in the introduction, there is no master node whose clock reading is simply broadcast to the other nodes. Instead the nodes will have to communicate with each other through messages to reach consensus. Reaching consensus in a distributed system means that the nodes have to correct their clocks until they are synchronized with a slight error margin. The following two algorithms attempt to reach this goal through various strategies.
+    
+    \innerblock{Average TimeSynch}{
+      Like the name implies, Average TimeSynch works by averaging the clocks of each node with the clocks of the neighboring nodes.\\
+
+      It has three major parts that are utilized to achieve consensus. Each node periodically sends a message to each of it's neighboring nodes. This message contains a package of information about the sending node's clock. \\
+      
+      The neighbor uses this information for relative drift estimation, estimating how much quicker the sending node's clock progresses when compared to its own  clock. The continuously transmitted messages allow the nodes to calculate an average drift between itself and its neighbors. \\
+      
+      The nodes use this estimate to correct its own drift using drift compensation. Each node uses the messages to average their drift with that of its neighbors. \\
+      
+      Finally the nodes calculate an average offset between itself and its neighbors and changes its value to said estimate. Through repeated messaging the nodes in the network reach a very similar clock rate and reading, thereby reaching consensus.
+    } % end innerblock ATS
+    
+    \innerblock{Maximum Minumum Time Synchronization}{
+      Unlike ATS, where each node gradually transforms its clock in the direction of the neighboring nodes' clocks, MMTS makes the clocks jump directly to that of the neighboring nodes', given that some conditions are fulfilled. This gives a far quicker synchronization time than the gradual approach of ATS.
+
+      Just like ATS, nodes in MMTS periodically send out messages containing information on their local clock, and their current parameters. By calculating the relative skew estimate in a similar fashion to ATS, each node is able to approximate the value of the neighboring node's clock. If this estimate indicates that the neighbor's clock is either progressing significantly faster or slower than the node's own clock, then the node's own clock is transformed to match the estimate of the neighbor's clock. The clock offset is similarly updated.
+
+      By using this process to incrementally reach consensus amongst neighbors, the consensus propagates throughout the network until every node eventually agrees on the current time, thereby reaching global consensus in the network.
+    } % end innerblock MMTS
+  } % end block Consensus
+
+  \block{Results}{
+    \begin{tikzpicture}
+      \begin{axis}[
+          width=0.41\linewidth, % Scale the plot to \linewidth
+          grid=major, % Display a grid
+          grid style={dashed,gray!30}, % Set the style
+          xlabel=Time $t$, % Set the labels
+          ylabel=Average error $\overline{E}(t)$,
+          xmin=0,
+          xmax=10000,
+          ymin=0,
+          ymax=900,
+          xtick={1000, 2000, 3000, 4000 ,5000 ,6000 ,7000 ,8000 ,9000, 10000},
+          ytick={100, 200, 300, 400 ,500 ,600 ,700 ,800 ,900, 1000},
+          x unit=ms, % Set the respective units
+          y unit=ms
+        ]
+        \addplot+[mark=none, line width=4pt] table[x=Time,y=Error,col sep=comma] {../data/ats-0-100.csv}; 
+        \addplot+[mark=none, line width=4pt] table[x=Time,y=Error,col sep=comma] {../data/ats-10-100.csv}; 
+        \addplot+[mark=none, line width=4pt] table[x=Time,y=Error,col sep=comma] {../data/ats-50-100.csv}; 
+        
+        \legend{$T = 20 \text{ms}$,$T = 100 \text{ms}$,$T = 500 \text{ms}$}
+      \end{axis}
+      \node[align=center,font=\bfseries, yshift=2em, xshift=1em] (title) 
+       {An illustration of points $A$ and $B$\\ being on the same side of $\ell$};
+    \end{tikzpicture}
+        \begin{tikzpicture}
+      \begin{axis}[
+          width=0.41\linewidth, % Scale the plot to \linewidth
+          grid=major, % Display a grid
+          grid style={dashed,gray!30}, % Set the style
+          xlabel=Time $t$, % Set the labels
+          ylabel=Average error $\overline{E}(t)$,
+          xmin=0,
+          xmax=10000,
+          ymin=0,
+          ymax=900,
+          x unit=ms, % Set the respective units
+          y unit=ms,
+          xtick={1000, 2000, 3000, 4000 ,5000 ,6000 ,7000 ,8000 ,9000, 10000},
+          ytick={100, 200, 300, 400 ,500 ,600 ,700 ,800 ,900, 1000}
+        ]
+        \addplot+[mark=none, line width=4pt] table[x=Time,y=Error,col sep=comma] {../data/mmts-0-100.csv}; 
+        \addplot+[mark=none, line width=4pt] table[x=Time,y=Error,col sep=comma] {../data/mmts-10-100.csv}; 
+        \addplot+[mark=none, line width=4pt] table[x=Time,y=Error,col sep=comma] {../data/mmts-50-100.csv}; 
+        
+        \legend{$T = 20 \text{ms}$,$T = 100 \text{ms}$,$T = 500 \text{ms}$}
+      \end{axis}
+    \end{tikzpicture}
+  }
+  
+
+\end{columns}
+% block at bottom of poster that spans the full width
+% \block[titleoffsety=-1cm,bodyoffsety=-1cm]{Sample document}{This poster...}
+\end{document}
+

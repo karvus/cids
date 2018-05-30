@@ -81,7 +81,7 @@ In a fully distributed system as described in the introduction, there is no mast
 %Brief description of ATS. Skip the math perhaps.
 Like the name implies, Average TimeSynch works by averaging the clocks of each node with the clocks of the neighboring nodes.
 
-It has three major parts that are utilized to achieve consensus. Each node periodically sends a message to each of it's neighboring nodes. This message contains a package of information about the sending node's clock. The neighbor uses this information for relative drift estimation, estimating how much quicker the sending node's clock progresses when compared to the neighbor's clock. The continuously transmitted messages allow the nodes to calculate an estimate of the global drift across the network. The nodes use this estimate to correct its own drift using drift compensation. Each node uses the messages to average their estimate with its neighbors' stored estimate. Finally the nodes calculate an average offset between itself and its neighbors and changes its value to said estimate. Through repeated messaging the nodes in the network reach a very similar clock rate and reading, thereby reaching consensus.
+It has three major parts that are utilized to achieve consensus. Each node periodically sends a message to each of it's neighboring nodes. This message contains a package of information about the sending node's clock. The neighbor uses this information for relative drift estimation, estimating how much quicker the sending node's clock progresses when compared to the neighbor's clock. The continuously transmitted messages allow the nodes to calculate an average drift between itself and its neighbors. The nodes use this estimate to correct its own drift using drift compensation. Each node uses the messages to average their drift with that of its neighbors. Finally the nodes calculate an average offset between itself and its neighbors and changes its value to said estimate. Through repeated messaging the nodes in the network reach a very similar clock rate and reading, thereby reaching consensus.
 
 \subsection{Maximum Minimum Time Synchronization}
 % Brief description of MMTS.
@@ -157,6 +157,9 @@ By using this process to incrementally reach consensus amongst neighbors, the co
 \section{Conclusion}
 
 \lipsum[5]
+
+\section{Contact Info}
+
 
 \end{multicols}
 
